@@ -30,7 +30,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .proof a { color: var(--ink); min-block-size: 40px; display: inline-flex; align-items: center; }
 
 /* ---- design annotations: which content the family supplied or picked. Not a feature. ---- */
-.src { display: inline-flex; align-items: center; gap: 4px; margin-inline-start: 8px; padding: 0 8px; border: 1px dashed var(--anno); border-radius: 4px; background: var(--anno-soft); color: var(--anno); font: 400 .8125rem/1.6 var(--font-ui); vertical-align: middle; white-space: nowrap; }
+.src { display: inline-flex; align-items: center; gap: 4px; margin-inline-start: 8px; padding: 3px 10px; border: 1px dashed var(--anno); border-radius: 4px; background: var(--anno-soft); color: var(--anno); font: 400 .8125rem/1.6 var(--font-ui); vertical-align: middle; white-space: nowrap; }
 .src::before { content: "הערת עיצוב:"; font-weight: 600; }
 .src .ic { inline-size: 13px; block-size: 13px; }
 .hide-anno .src, .hide-anno .anno-only { display: none; }
