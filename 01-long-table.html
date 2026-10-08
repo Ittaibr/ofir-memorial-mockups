@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אופיר · השולחן הארוך</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/tokens.css">
+<style>
+:root { --on-olive: #fff; --bar-h: 40px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --on-olive: #161915; } }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { padding-block-start: var(--bar-h); padding-block-end: 112px; overflow-x: hidden; }
+[hidden] { display: none !important; }
+.vh { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; }
+svg.ic { inline-size: 22px; block-size: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- design-view switch: quiet, not part of the product ---- */
+.modebar { position: fixed; inset-block-start: 0; inset-inline: 0; z-index: 50; block-size: var(--bar-h); display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--chat-bg); border-block-end: 1px solid var(--line); font-size: 13px; color: var(--muted); padding-inline: 8px; }
+.modebar span { margin-inline-end: 6px; }
+.modebar button { border: 0; background: transparent; min-block-size: 32px; padding-inline: 12px; border-radius: 999px; font-size: 14px; color: var(--muted); }
+.modebar button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 0 0 1px var(--line); }
+
+/* ---- buttons ---- */
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-block-size: 52px; padding-inline: 28px; border-radius: 999px; border: 2px solid var(--olive); background: var(--olive); color: var(--on-olive); font-weight: 700; font-size: 18px; transition: background .3s var(--ease), transform .3s var(--ease); }
+.pill:hover { transform: translateY(-1px); }
+.pill.quiet { background: transparent; color: var(--ink); }
+.textbtn { border: 0; background: transparent; min-block-size: 48px; padding-inline: 14px; color: var(--olive); font-weight: 600; font-size: 17px; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---- hero ---- */
+.wrap { max-inline-size: 1180px; margin-inline: auto; padding-inline: var(--gutter); }
+.hero { padding-block: 28px 56px; display: grid; gap: 28px; }
+.hero .print { max-inline-size: 330px; }
+.hero h1 { font: 500 clamp(56px, 17vw, 96px)/1 var(--font-serif); margin: 0 0 12px; letter-spacing: -.01em; }
+.hero .dates { color: var(--muted); font-size: 18px; }
+.hero .bio { font: 400 22px/1.65 var(--font-serif); max-inline-size: 28ch; margin: 22px 0 26px; }
+.hero .count { color: var(--muted); font-size: 16px; margin: 14px 0 0; }
+@media (min-width: 900px) {
+  .hero { grid-template-columns: 5fr 7fr; gap: 72px; align-items: end; padding-block: 56px 96px; }
+  .hero .print { max-inline-size: 440px; }
+  .hero .bio { font-size: 26px; }
+}
+
+/* ---- prints ---- */
+.print { margin: 0; background: var(--surface); padding: 8px 8px 0; border: 1px solid var(--line); box-shadow: var(--shadow-print); }
+.print img { inline-size: 100%; block-size: auto; }
+.print figcaption { padding: 9px 2px 11px; display: grid; gap: 1px; }
+.print .cap { font: 400 17px/1.45 var(--font-serif); }
+.print .cr { font-size: 15px; color: var(--muted); }
+
+/* ---- the table ---- */
+.table { display: grid; grid-template-columns: 1fr; gap: 56px 0; padding-block-end: 40px; }
+.entry { min-inline-size: 0; transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.entry.pre { opacity: 0; transform: translateY(8px); }
+.entry.pre.in { opacity: 1; transform: none; }
+.entry .inner { display: grid; gap: 20px; }
+.entry.a:not(.pair):not(.wide):not(.chapter) { margin-inline-end: 10%; }
+.entry.b:not(.pair):not(.wide):not(.chapter) { margin-inline-start: 10%; }
+.entry.portrait:not(.pair) .print { max-inline-size: 86%; }
+.entry.b.portrait:not(.pair) .print { margin-inline-start: auto; }
+.pairrow { display: flex; gap: 14px; align-items: flex-start; }
+.pairrow .print { flex: var(--r) 1 0; min-inline-size: 0; }
+.pairrow .print:nth-child(2) { margin-block-start: 36px; }
+.words-wrap { max-inline-size: 36ch; }
+.words-wrap blockquote { margin: 0; font: 400 21px/1.7 var(--font-serif); }
+.by { margin: 10px 0 0; font-size: 16px; color: var(--muted); }
+.by b { color: var(--olive); font-weight: 600; }
+.fam { background: var(--amber-soft); color: var(--ink); padding: 2px 10px; border-radius: 999px; font-weight: 600; font-size: 15px; }
+.chapter { padding-block: 8px; }
+.chapter h3 { margin: 0 0 8px; font: 500 30px/1.2 var(--font-serif); }
+.chapter h3 span { font: 400 18px var(--font-ui); color: var(--muted); margin-inline-start: 12px; }
+.chapter p { margin: 0; font: 400 21px/1.7 var(--font-serif); max-inline-size: 34ch; }
+
+.entry.pending .print { border: 2px dashed var(--muted); background: transparent; box-shadow: none; }
+.entry.pending .words-wrap { border: 2px dashed var(--muted); border-radius: 12px; padding: 16px 18px; }
+.waitnote { display: inline-flex; align-items: center; gap: 10px; margin: 14px 0 0; background: var(--amber-soft); color: var(--ink); padding: 10px 16px; border-radius: 12px; font-size: 16px; line-height: 1.45; }
+.waitnote svg { color: var(--amber); }
+
+/* ---- the place (slot) and composer: same space as the stream ---- */
+.slotwrap { min-inline-size: 0; }
+.slot { inline-size: 100%; min-block-size: 190px; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(34,38,31,.06); padding: 24px; color: var(--ink); transition: box-shadow .5s var(--ease), background .5s var(--ease); }
+.slot:hover { box-shadow: var(--shadow-print); }
+.slot .plus { inline-size: 56px; block-size: 56px; border-radius: 999px; border: 2px solid var(--olive); color: var(--olive); display: grid; place-items: center; margin-block-end: 6px; }
+.slot .plus svg { inline-size: 26px; block-size: 26px; }
+.slot strong { font: 500 24px var(--font-serif); }
+.slot small { font-size: 16px; color: var(--muted); }
+.slotwrap.open .slot { display: none; }
+.composer { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-print); padding: 22px 18px 24px; }
+.composer h2 { margin: 0 0 14px; font: 500 26px/1.25 var(--font-serif); }
+.c-prev { display: flex; flex-wrap: wrap; gap: 14px; margin-block-end: 14px; align-items: flex-end; }
+.c-prev:empty { display: none; }
+.c-prev .pv { display: grid; gap: 4px; justify-items: start; }
+.c-prev .pv .print { padding: 5px; }
+.c-prev img { block-size: 130px; inline-size: auto; max-inline-size: 100%; }
+.c-prev .rm { min-block-size: 48px; border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: 16px; padding-inline: 6px; }
+.pickbtn { display: grid; place-items: center; align-content: center; gap: 8px; min-block-size: 170px; border: 2px dashed var(--olive); border-radius: 12px; background: var(--olive-soft); color: var(--ink); font-size: 20px; font-weight: 700; cursor: pointer; text-align: center; padding: 18px; }
+.pickbtn .plus { color: var(--olive); }
+.pickbtn .plus svg { inline-size: 34px; block-size: 34px; }
+.pickbtn:focus-within, .pickbtn:hover { background: color-mix(in srgb, var(--olive-soft) 70%, var(--olive) 14%); }
+.composer:has(input:focus-visible) .pickbtn { outline: 3px solid var(--olive); outline-offset: 3px; }
+.composer.has-files .pickbtn { min-block-size: 56px; display: inline-flex; gap: 10px; border-style: solid; border-radius: 999px; padding-inline: 24px; font-size: 18px; }
+.composer.has-files .pickbtn .plus svg { inline-size: 22px; block-size: 22px; }
+.hint { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
+.composer.has-files .hint { display: none; }
+.field { margin-block-start: 20px; }
+.field label { display: block; font-weight: 600; font-size: 18px; margin-block-end: 6px; }
+.field label small { font-weight: 400; color: var(--muted); font-size: 16px; }
+.field input, .field textarea { inline-size: 100%; min-block-size: 54px; padding: 12px 14px; font: 400 18px/1.5 var(--font-ui); color: var(--ink); background: var(--bg); border: 1.5px solid var(--muted); border-radius: 10px; }
+.field textarea { resize: vertical; min-block-size: 120px; }
+.field input[aria-invalid="true"] { border-color: var(--amber); border-width: 2px; }
+.err { margin: 8px 0 0; font-size: 16px; color: var(--ink); background: var(--amber-soft); padding: 8px 12px; border-radius: 10px; }
+.composer .waitnote { margin-block-start: 20px; }
+.c-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-block-start: 22px; }
+.c-actions .pill { flex: 1 1 220px; }
+.thanks h2 { font-size: 30px; }
+.thanks p { margin: 0 0 20px; max-inline-size: 36ch; }
+.thanks .row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+
+.outro { text-align: center; color: var(--muted); padding-block: 48px 8px; font: 400 20px/1.6 var(--font-serif); }
+.footnote { text-align: center; color: var(--muted); font-size: 14px; padding-block: 8px 24px; }
+
+.dock { position: fixed; inset-inline: 0; inset-block-end: 16px; display: flex; justify-content: center; z-index: 30; pointer-events: none; }
+.dock .pill { pointer-events: auto; box-shadow: 0 8px 24px -6px rgba(34,38,31,.35); }
+@media (min-width: 900px) { .dock { display: none; } }
+
+@media (min-width: 900px) {
+  .table { grid-template-columns: repeat(12, 1fr); column-gap: 24px; row-gap: 96px; padding-block-end: 64px; }
+  .entry { grid-column: 1 / -1; }
+  .entry.a:not(.pair):not(.wide):not(.chapter), .entry.b:not(.pair):not(.wide):not(.chapter) { margin-inline: 0; }
+  .entry.prints.a { grid-column: 1 / span 8; }
+  .entry.prints.b { grid-column: 5 / span 8; }
+  .entry.prints.has-text.a { grid-column: 1 / span 11; }
+  .entry.prints.has-text.b { grid-column: 2 / span 11; }
+  .entry.has-text:not(.wide) .inner { grid-template-columns: 1.35fr 1fr; align-items: end; gap: 40px; }
+  .entry.has-text.b:not(.wide) .inner { direction: rtl; }
+  .entry.has-text.b:not(.wide) .inner > .print { order: 2; }
+  .entry.pair.a { grid-column: 1 / span 10; }
+  .entry.pair.b { grid-column: 3 / span 10; }
+  .entry.words.a { grid-column: 2 / span 5; }
+  .entry.words.b { grid-column: 7 / span 5; }
+  .entry.chapter { grid-column: 4 / span 6; }
+  .entry.wide, .entry.prints.has-text.wide { grid-column: 1 / -1; }
+  .entry.wide .inner { grid-template-columns: 1fr; }
+  .entry.wide .words-wrap { max-inline-size: 44ch; }
+  .entry.portrait:not(.pair):not(.has-text) .print { max-inline-size: 420px; }
+  .entry.b.portrait:not(.pair) .print { margin-inline-start: 0; }
+  .entry.portrait.has-text .print { max-inline-size: 100%; }
+  .slotwrap { grid-column: 3 / span 8; }
+  .slot { min-block-size: 220px; }
+  .composer { padding: 32px 36px 36px; }
+  .composer h2 { font-size: 30px; }
+  .words-wrap blockquote { font-size: 23px; }
+}
+
+/* ---- admin ---- */
+#admin { padding-block: 32px 40px; }
+#admin h1 { font: 500 38px/1.2 var(--font-serif); margin: 0 0 8px; }
+#admin .lead { font-size: 19px; color: var(--muted); margin: 0 0 32px; max-inline-size: 40ch; }
+#admin h2 { font: 500 28px/1.25 var(--font-serif); margin: 0 0 6px; }
+.a-grid { display: grid; gap: 48px; }
+@media (min-width: 960px) { .a-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; align-items: start; } .a-queue { position: sticky; inset-block-start: 64px; } .a-live-list { max-block-size: calc(100vh - 220px); overflow: auto; padding-inline-end: 8px; } }
+.a-sub { font-size: 18px; color: var(--muted); margin: 0 0 18px; }
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-print); }
+.qcard .prints { display: flex; flex-wrap: wrap; gap: 14px; margin-block-end: 18px; }
+.qcard .prints .print { flex: 1 1 200px; max-inline-size: 360px; }
+.qcard .words { font: 400 22px/1.7 var(--font-serif); margin: 0 0 14px; }
+.qcard .who { font-size: 19px; margin: 0 0 22px; }
+.qcard .who b { color: var(--olive); }
+.big { display: flex; align-items: center; justify-content: center; inline-size: 100%; min-block-size: 68px; border-radius: 999px; font-size: 22px; font-weight: 700; border: 2px solid var(--olive); }
+.big.yes { background: var(--olive); color: var(--on-olive); margin-block-end: 14px; }
+.big.no { background: transparent; color: var(--ink); }
+.empty { background: var(--olive-soft); border-radius: 12px; padding: 28px 22px; font-size: 20px; }
+.arow { display: grid; gap: 14px; padding-block: 18px; border-block-end: 1px solid var(--line); transition: background .8s var(--ease); }
+.arow.flash { background: var(--olive-soft); }
+.arow .what { display: flex; gap: 14px; align-items: flex-start; }
+.arow .thumb { flex: none; inline-size: 92px; }
+.arow .thumb .print { padding: 4px; }
+.arow .thumb .stack { display: grid; gap: 6px; }
+.arow .lbl { font-size: 19px; font-weight: 600; margin: 0 0 2px; }
+.arow .snip { margin: 0; font-size: 18px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.arow .btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.sm { display: inline-flex; align-items: center; gap: 8px; min-block-size: 52px; padding-inline: 20px; border-radius: 999px; border: 2px solid var(--olive); background: transparent; color: var(--ink); font-size: 19px; font-weight: 600; }
+.sm[aria-pressed="true"] { background: var(--olive); color: var(--on-olive); }
+.sm:disabled { opacity: .4; cursor: default; }
+
+.toast { position: fixed; inset-inline: 12px; inset-block-end: 16px; z-index: 60; margin-inline: auto; max-inline-size: 460px; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 8px 8px 8px 20px; padding-inline-start: 20px; padding-inline-end: 8px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 19px; box-shadow: 0 10px 30px -8px rgba(0,0,0,.4); }
+.toast button { min-block-size: 52px; padding-inline: 22px; border-radius: 999px; border: 2px solid currentColor; background: transparent; color: inherit; font-weight: 700; font-size: 19px; }
+body[data-view="admin"] .dock { display: none; }
+</style>
+</head>
+<body data-view="site">
+
+<div class="modebar" role="group" aria-label="תצוגת עיצוב">
+  <span>תצוגת עיצוב</span>
+  <button type="button" data-mode="site" aria-pressed="true">אתר</button>
+  <button type="button" data-mode="contribute" aria-pressed="false">תרומה</button>
+  <button type="button" data-mode="admin" aria-pressed="false">ניהול</button>
+</div>
+
+<main id="site">
+  <div class="wrap">
+    <header class="hero" id="hero"></header>
+    <section class="table" id="table" aria-label="השולחן הארוך: תמונות ומילים"></section>
+    <p class="outro">השולחן ממשיך להתמלא.</p>
+    <p class="footnote">כל התמונות והמילים כאן הן לדוגמה בלבד.</p>
+  </div>
+  <div class="dock" id="dock"><button type="button" class="pill" id="dockBtn"></button></div>
+</main>
+
+<main id="admin" hidden>
+  <div class="wrap">
+    <h1>ניהול</h1>
+    <p class="lead">כאן רק מחליטים. כל החלטה אפשר לבטל תוך כמה שניות.</p>
+    <div class="a-grid">
+      <section class="a-queue" aria-labelledby="qh"><h2 id="qh">ממתינים להחלטה</h2><p class="a-sub" id="qcount"></p><div id="qbox"></div></section>
+      <section class="a-live" aria-labelledby="lh"><h2 id="lh">השולחן כמו שהוא באתר</h2><p class="a-sub">להקדים או לאחר זה להזיז למעלה או למטה. להבליט זה להרחיב תמונה לרוחב מלא.</p><div class="a-live-list" id="live"></div></section>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">ביטול</button></div>
+
+<script src="shared/data.js"></script>
+<script src="shared/photos.js"></script>
+<script>
+(function () {
+  var O = window.OFIR, P = O.person, C = O.copy;
+  var qs = function (s, r) { return (r || document).querySelector(s); };
+  var qsa = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  var ICONS = {
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+    down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
+    wide: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>'
+  };
+  function ic(n) { return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[n] + '</svg>'; }
+
+  /* ---------- data ---------- */
+  function ph(id) { var p = O.byId(id); return { src: p.src, w: Math.round(p.ratio * 1000), h: 1000, alt: p.caption + ', תמונה לדוגמה', by: p.by, caption: p.caption }; }
+  function qph(id, by) { var p = O.byId(id); return { src: p.src, w: Math.round(p.ratio * 1000), h: 1000, alt: 'תמונה שנשלחה על ידי ' + by + ', תמונה לדוגמה', by: by, caption: '' }; }
+  function msg(id) { return O.messages.filter(function (m) { return m.id === id; })[0]; }
+  function words(e, mid) { var m = msg(mid); e.text = m.text; e.name = m.name; e.time = m.time; e.family = !!m.family; return e; }
+  function E(id, kind, o) { o = o || {}; o.id = id; o.kind = kind; o.status = o.status || 'live'; return o; }
+  var ch = O.chapters;
+  var table = [
+    words(E('e1', 'prints', { photos: [ph('p02')] }), 'm1'),
+    words(E('e2', 'words'), 'm2'),
+    E('e3', 'prints', { photos: [ph('p03'), ph('p09')] }),
+    E('e4', 'chapter', { year: ch[0].year, title: ch[0].title, text: ch[0].text }),
+    words(E('e5', 'prints', { photos: [ph('p04')] }), 'm4'),
+    words(E('e6', 'words'), 'm3'),
+    E('e7', 'prints', { photos: [ph('p05')] }),
+    E('e8', 'chapter', { year: ch[1].year, title: ch[1].title, text: ch[1].text }),
+    words(E('e9', 'prints', { photos: [ph('p06')], wide: true }), 'm6'),
+    words(E('e10', 'words'), 'm5'),
+    E('e11', 'prints', { photos: [ph('p08'), ph('p11')] }),
+    E('e12', 'chapter', { year: ch[3].year, title: ch[3].title, text: ch[3].text }),
+    E('e13', 'prints', { photos: [ph('p12')] }),
+    E('e14', 'prints', { photos: [ph('p07')] })
+  ];
+  O.queue.forEach(function (q) {
+    table.push(E(q.id, q.photos.length ? 'prints' : 'words', { status: 'queue', photos: q.photos.map(function (id) { return id[0] === 'q' ? qph(id, q.name) : qph(id, q.name); }), text: q.text, name: q.name, time: q.time }));
+  });
+
+  /* ---------- state ---------- */
+  var cOpen = false, cAfter = null, files = [], lastName = '', firstRender = true;
+
+  /* ---------- site rendering ---------- */
+  function printHTML(p) {
+    var cap = p.caption ? '<span class="cap" dir="auto">' + esc(p.caption) + '</span>' : '';
+    return '<figure class="print" style="--r:' + (p.w / p.h).toFixed(3) + '"><img src="' + p.src + '" width="' + p.w + '" height="' + p.h + '" alt="' + esc(p.alt) + '" decoding="async"><figcaption>' + cap + '<span class="cr">צולם ע״י <bdi>' + esc(p.by) + '</bdi></span></figcaption></figure>';
+  }
+  function wordsHTML(e) {
+    var who = e.mine ? 'אתם' : e.name;
+    var by = e.family ? '<span class="fam">' + esc(e.name) + '</span>' : '<b dir="auto">' + esc(who) + '</b>';
+    return '<div class="words-wrap"><blockquote dir="auto">' + esc(e.text) + '</blockquote><p class="by">' + by + ' · ' + esc(e.time || '') + '</p></div>';
+  }
+  function waitHTML() { return '<p class="waitnote">' + ic('clock') + '<span>' + esc(C.waiting) + '</span></p>'; }
+  function entryHTML(e, pos) {
+    var cls = ['entry', pos, e.kind === 'chapter' ? 'chapter' : e.kind === 'words' ? 'words' : 'prints'];
+    if (e.status === 'pending') cls.push('pending');
+    var h = '';
+    if (e.kind === 'chapter') {
+      h = '<h3>' + esc(e.title) + '<span><bdi>' + e.year + '</bdi></span></h3><p>' + esc(e.text) + '</p>';
+    } else if (e.kind === 'words') {
+      h = wordsHTML(e) + (e.status === 'pending' ? waitHTML() : '');
+    } else {
+      var n = e.photos.length;
+      if (n > 1) cls.push('pair');
+      else if (e.photos[0].w < e.photos[0].h) cls.push('portrait');
+      if (e.wide && n === 1) cls.push('wide');
+      if (e.text) cls.push('has-text');
+      var pr = n > 1 ? '<div class="pairrow">' + e.photos.slice(0, 3).map(printHTML).join('') + '</div>' : printHTML(e.photos[0]);
+      h = '<div class="inner">' + pr + (e.text ? wordsHTML(e) : '') + '</div>' + (e.status === 'pending' ? waitHTML() : '');
+    }
+    return '<article class="' + cls.join(' ') + '" data-id="' + e.id + '">' + h + '</article>';
+  }
+  function slotHTML(after) {
+    return '<div class="slotwrap" data-after="' + after + '"><button type="button" class="slot"><span class="plus">' + ic('plus') + '</span><strong>הניחו כאן תמונה</strong><small>אפשר לבחור כמה תמונות בבת אחת</small></button></div>';
+  }
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+    es.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }) : null;
+
+  function renderSite() {
+    var el = qs('#table'), html = '', liveCount = 0, pendingSlot = null, lastLive = null, i = 0;
+    table.forEach(function (e) {
+      if (e.status !== 'live' && e.status !== 'pending') return;
+      if (e.status === 'live' && pendingSlot) { html += slotHTML(pendingSlot); pendingSlot = null; }
+      html += entryHTML(e, i % 2 ? 'b' : 'a'); i++;
+      if (e.status === 'live') { lastLive = e.id; liveCount++; if (liveCount % 4 === 0) pendingSlot = e.id; }
+    });
+    if (pendingSlot) html += slotHTML(pendingSlot);
+    else if (lastLive && liveCount % 4 !== 0) html += slotHTML(lastLive);
+    // composer is persistent: detach before wiping
+    if (composer.parentNode) composer.parentNode.removeChild(composer);
+    el.innerHTML = html;
+    var wraps = qsa('.slotwrap', el);
+    if (cOpen) {
+      var w = wraps.filter(function (x) { return x.dataset.after === cAfter; })[0] || wraps[0];
+      if (w) { cAfter = w.dataset.after; w.classList.add('open'); w.appendChild(composer); composer.hidden = false; }
+    } else composer.hidden = true;
+    if (firstRender) {
+      qsa('.entry', el).forEach(function (x) {
+        if (x.getBoundingClientRect().top > innerHeight * 0.92 && io) { x.classList.add('pre'); io.observe(x); }
+      });
+      firstRender = false;
+    }
+    updateDock();
+  }
+
+  function renderHero() {
+    var f = O.byId('p01');
+    qs('#hero').innerHTML =
+      '<figure class="print"><img src="' + f.src + '" width="' + Math.round(f.ratio * 1000) + '" height="1000" alt="' + esc(P.name) + ', תמונה לדוגמה"><figcaption><span class="cr">צולם ע״י ' + esc(f.by) + '</span></figcaption></figure>' +
+      '<div><h1>' + esc(P.name) + '</h1><div class="dates"><bdi dir="ltr">' + esc(P.dates) + '</bdi></div>' +
+      '<p class="bio">' + esc(P.bio) + '</p><button type="button" class="pill" id="heroBtn">' + ic('plus') + 'להניח תמונה בשולחן</button>' +
+      '<p class="count">' + P.count + ' תמונות ומילים הונחו כאן עד עכשיו.</p></div>';
+    qs('#heroBtn').addEventListener('click', function () { openComposer(nearestSlot(), true); });
+  }
+  function updateDock() {
+    var b = qs('#dockBtn');
+    b.innerHTML = ic('plus') + 'הניחו תמונה בשולחן';
+    qs('#dock').hidden = cOpen || document.body.dataset.view === 'admin';
+  }
+
+  /* ---------- composer ---------- */
+  var composer = document.createElement('div');
+  composer.className = 'composer'; composer.id = 'composer'; composer.hidden = true;
+  composer.innerHTML =
+    '<form id="cform" novalidate>' +
+      '<h2>הניחו כאן תמונה</h2>' +
+      '<div class="c-prev" id="prev"></div>' +
+      '<label class="pickbtn" for="pick"><span class="plus">' + ic('plus') + '</span><span id="pickLbl">לבחור תמונות מהטלפון</span></label>' +
+      '<input class="vh" type="file" id="pick" accept="image/*" multiple>' +
+      '<p class="hint">אפשר לבחור כמה תמונות בבת אחת.</p>' +
+      '<div class="field"><label for="nm">השם שלכם</label><input id="nm" type="text" autocomplete="name" dir="auto" required aria-required="true" aria-describedby="nmErr"><p class="err" id="nmErr" role="alert" hidden>נשמח לדעת מי מניח את התמונה. מה השם שלכם?</p></div>' +
+      '<div class="field"><label for="tx">מילה או סיפור <small>(לא חובה)</small></label><textarea id="tx" dir="auto" rows="4" placeholder="מה הייתם רוצים שיידעו על התמונה הזאת?"></textarea></div>' +
+      '<p class="err" id="emptyErr" role="alert" hidden>אפשר להוסיף תמונה, מילה, או שתיהן.</p>' +
+      '<p class="waitnote">' + ic('clock') + '<span>המשפחה קוראת כל דבר לפני שהוא עולה לאתר. עד אז רק את/ה רואה אותו כאן.</span></p>' +
+      '<div class="c-actions"><button type="submit" class="pill">' + esc(C.send) + '</button><button type="button" class="textbtn" id="cancel">לא עכשיו</button></div>' +
+    '</form>' +
+    '<div class="thanks" id="thanks" hidden><h2>' + esc(C.thanks) + '</h2><p>מה ששלחתם מונח בשולחן, ומחכה למשפחה. רק את/ה רואה אותו עכשיו.</p><div class="row"><button type="button" class="pill" id="more">להוסיף עוד</button><button type="button" class="textbtn" id="done">לחזור לשולחן</button></div></div>';
+  var pick = qs('#pick', composer), prev = qs('#prev', composer), nm = qs('#nm', composer), tx = qs('#tx', composer);
+
+  function drawPrev() {
+    prev.innerHTML = '';
+    files.forEach(function (f, i) {
+      var d = document.createElement('div'); d.className = 'pv';
+      d.innerHTML = '<figure class="print"><img alt="תמונה שבחרתם"></figure><button type="button" class="rm">להסיר</button>';
+      var img = qs('img', d); img.src = f.url;
+      img.onload = function () { f.w = img.naturalWidth; f.h = img.naturalHeight; };
+      qs('.rm', d).addEventListener('click', function () { files.splice(i, 1); drawPrev(); });
+      prev.appendChild(d);
+    });
+    composer.classList.toggle('has-files', files.length > 0);
+    qs('#pickLbl', composer).textContent = files.length ? 'עוד תמונות' : 'לבחור תמונות מהטלפון';
+  }
+  pick.addEventListener('change', function () {
+    Array.prototype.forEach.call(pick.files, function (f) { files.push({ url: URL.createObjectURL(f), w: 4, h: 3 }); });
+    pick.value = ''; drawPrev(); qs('#emptyErr', composer).hidden = true;
+  });
+  nm.addEventListener('input', function () { qs('#nmErr', composer).hidden = true; nm.removeAttribute('aria-invalid'); });
+  nm.addEventListener('blur', function () { if (!nm.value.trim() && (files.length || tx.value.trim())) showNameErr(); });
+  function showNameErr() { qs('#nmErr', composer).hidden = false; nm.setAttribute('aria-invalid', 'true'); }
+
+  function resetComposer(keepName) {
+    files = []; drawPrev(); tx.value = ''; if (!keepName) nm.value = '';
+    qs('#cform', composer).hidden = false; qs('#thanks', composer).hidden = true;
+    qs('#nmErr', composer).hidden = true; qs('#emptyErr', composer).hidden = true; nm.removeAttribute('aria-invalid');
+  }
+  qs('#cform', composer).addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var name = nm.value.trim(), text = tx.value.trim();
+    if (!name) { showNameErr(); nm.focus(); return; }
+    if (!files.length && !text) { qs('#emptyErr', composer).hidden = false; return; }
+    lastName = name;
+    var e = E('u' + Date.now(), files.length ? 'prints' : 'words', {
+      status: 'pending', mine: true, name: name, text: text, time: 'עכשיו',
+      photos: files.map(function (f) { return { src: f.url, w: f.w, h: f.h, alt: 'תמונה ששלחתם', by: name, caption: '' }; })
+    });
+    var idx = table.map(function (x) { return x.id; }).indexOf(cAfter);
+    // after anchor and any pending items already trailing it
+    idx = idx < 0 ? table.length - 1 : idx;
+    while (table[idx + 1] && table[idx + 1].status === 'pending') idx++;
+    table.splice(idx + 1, 0, e);
+    files = []; drawPrev(); tx.value = '';
+    qs('#cform', composer).hidden = true; qs('#thanks', composer).hidden = false;
+    renderSite(); renderAdmin();
+    var node = qs('[data-id="' + e.id + '"]'); if (node) node.scrollIntoView({ block: 'center' });
+    qs('#more', composer).focus({ preventScroll: true });
+  });
+  qs('#more', composer).addEventListener('click', function () { resetComposer(true); pick.click(); });
+  qs('#done', composer).addEventListener('click', function () { closeComposer(); });
+  qs('#cancel', composer).addEventListener('click', function () { closeComposer(); });
+
+  function openComposer(after, doPick) {
+    if (!qs('#thanks', composer).hidden) resetComposer(true);
+    if (!nm.value && lastName) nm.value = lastName;
+    cOpen = true; cAfter = after; renderSite();
+    var w = qs('.slotwrap.open'); if (w) w.scrollIntoView({ block: 'center' });
+    if (doPick) pick.click();
+  }
+  function closeComposer() { cOpen = false; renderSite(); }
+  function nearestSlot() {
+    var ws = qsa('.slotwrap'), t = ws.filter(function (w) { return w.getBoundingClientRect().top > 120; })[0] || ws[ws.length - 1];
+    return t ? t.dataset.after : null;
+  }
+  qs('#table').addEventListener('click', function (ev) {
+    var b = ev.target.closest('.slot'); if (!b) return;
+    openComposer(b.parentNode.dataset.after, true);
+  });
+  qs('#dockBtn').addEventListener('click', function () { openComposer(nearestSlot(), true); });
+
+  /* ---------- toast ---------- */
+  var tt = null, undoFn = null;
+  function toast(m, undo) {
+    qs('#toastMsg').textContent = m; undoFn = undo; qs('#toast').hidden = false;
+    clearTimeout(tt); tt = setTimeout(function () { qs('#toast').hidden = true; undoFn = null; }, 5000);
+  }
+  qs('#toastUndo').addEventListener('click', function () { if (undoFn) undoFn(); clearTimeout(tt); qs('#toast').hidden = true; undoFn = null; });
+  function snapshot() { return table.map(function (e) { return Object.assign({}, e); }); }
+  function act(msgText, fn, focus) {
+    var s = snapshot(); fn();
+    renderSite(); renderAdmin(focus);
+    toast(msgText, function () { table = s; renderSite(); renderAdmin(); });
+  }
+
+  /* ---------- admin ---------- */
+  function byId(id) { return table.filter(function (e) { return e.id === id; })[0]; }
+  function label(e) {
+    if (e.kind === 'chapter') return 'פסקה: ' + e.title;
+    if (e.kind === 'words') return 'מילים של ' + (e.name);
+    return (e.photos.length > 1 ? e.photos.length + ' תמונות של ' : 'תמונה של ') + e.photos[0].by;
+  }
+  function renderAdmin(focus) {
+    var q = table.filter(function (e) { return e.status === 'queue' || e.status === 'pending'; });
+    qs('#qcount').textContent = q.length ? (q.length === 1 ? 'נשאר אחד להחליט עליו.' : 'נשארו ' + q.length + '. מציגים אחד בכל פעם.') : '';
+    var box = qs('#qbox');
+    if (!q.length) box.innerHTML = '<div class="empty">אין כרגע דבר שממתין. תודה על העזרה.</div>';
+    else {
+      var e = q[0];
+      box.innerHTML = '<article class="qcard">' +
+        (e.photos && e.photos.length ? '<div class="prints">' + e.photos.map(printHTML).join('') + '</div>' : '') +
+        (e.text ? '<p class="words" dir="auto">' + esc(e.text) + '</p>' : '') +
+        '<p class="who">מאת <b dir="auto">' + esc(e.name) + '</b> · ' + esc(e.time) + '</p>' +
+        '<button type="button" class="big yes" data-q="yes">' + esc(C.show) + '</button><button type="button" class="big no" data-q="no">' + esc(C.hide) + '</button></article>';
+    }
+    var live = table.filter(function (x) { return x.status === 'live'; });
+    qs('#live').innerHTML = live.map(function (x, i) {
+      var thumb = x.kind === 'chapter' ? '' : (x.photos && x.photos.length ? '<div class="thumb"><div class="stack">' + x.photos.slice(0, 2).map(function (p) { return '<figure class="print"><img src="' + p.src + '" width="' + p.w + '" height="' + p.h + '" alt=""></figure>'; }).join('') + '</div></div>' : '');
+      var sn = x.text || '';
+      var wideBtn = (x.kind === 'prints' && x.photos.length === 1) ? '<button type="button" class="sm" data-id="' + x.id + '" data-act="wide" aria-pressed="' + (!!x.wide) + '">' + ic('wide') + (x.wide ? 'מורחב' : 'להבליט') + '</button>' : '';
+      return '<div class="arow" data-row="' + x.id + '"><div class="what">' + thumb + '<div><p class="lbl" dir="auto">' + esc(label(x)) + '</p>' + (sn ? '<p class="snip" dir="auto">' + esc(sn) + '</p>' : '') + '</div></div>' +
+        '<div class="btns"><button type="button" class="sm" data-id="' + x.id + '" data-act="up"' + (i === 0 ? ' disabled' : '') + '>' + ic('up') + 'להקדים</button>' +
+        '<button type="button" class="sm" data-id="' + x.id + '" data-act="down"' + (i === live.length - 1 ? ' disabled' : '') + '>' + ic('down') + 'לאחר</button>' + wideBtn + '</div></div>';
+    }).join('');
+    if (focus) {
+      var b = qs('[data-id="' + focus.id + '"][data-act="' + focus.act + '"]');
+      if (b && !b.disabled) b.focus({ preventScroll: true }); else { var alt = qs('[data-id="' + focus.id + '"]:not(:disabled)'); if (alt) alt.focus({ preventScroll: true }); }
+      var row = qs('[data-row="' + focus.id + '"]'); if (row) { row.classList.add('flash'); setTimeout(function () { row.classList.remove('flash'); }, 1400); }
+    }
+  }
+  qs('#qbox').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-q]'); if (!b) return;
+    var e = table.filter(function (x) { return x.status === 'queue' || x.status === 'pending'; })[0]; if (!e) return;
+    var id = e.id;
+    if (b.dataset.q === 'yes') act('הוצג באתר', function () {
+      var x = byId(id);
+      if (x.status === 'queue') { table.splice(table.indexOf(x), 1); table.unshift(x); }
+      x.status = 'live';
+    });
+    else act('לא יוצג באתר', function () { byId(id).status = 'hidden'; });
+  });
+  qs('#live').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-act]'); if (!b || b.disabled) return;
+    var id = b.dataset.id, a = b.dataset.act;
+    if (a === 'wide') { var x0 = byId(id); act(x0.wide ? 'חזר לגודל רגיל' : 'התמונה תוצג ברוחב מלא', function () { byId(id).wide = !byId(id).wide; }, { id: id, act: a }); return; }
+    act(a === 'up' ? 'הוקדם' : 'אוחר', function () {
+      var liveIdx = table.map(function (e, i) { return e.status === 'live' ? i : -1; }).filter(function (i) { return i >= 0; });
+      var cur = table.indexOf(byId(id)), pos = liveIdx.indexOf(cur), tgt = liveIdx[pos + (a === 'up' ? -1 : 1)];
+      if (tgt == null) return;
+      var t = table[cur]; table[cur] = table[tgt]; table[tgt] = t;
+    }, { id: id, act: a });
+  });
+
+  /* ---------- mode switch ---------- */
+  function setMode(m) {
+    qsa('.modebar button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); });
+    var admin = m === 'admin';
+    document.body.dataset.view = admin ? 'admin' : 'site';
+    qs('#site').hidden = admin; qs('#admin').hidden = !admin;
+    window.scrollTo(0, 0);
+    if (admin) { renderAdmin(); return; }
+    if (m === 'contribute') { var first = qs('.slotwrap'); openComposer(first ? first.dataset.after : null, false); }
+    else if (cOpen) closeComposer();
+    updateDock();
+  }
+  qsa('.modebar button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+
+  renderHero(); renderSite(); renderAdmin();
+})();
+</script>
+</body>
+</html>

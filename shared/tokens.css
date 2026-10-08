@@ -1,0 +1,26 @@
+/* Palette and type from DESIGN.md ("limestone, olive leaf, evening light"). Shared by every mockup. */
+:root {
+  --bg: #F2F3EF; --surface: #FBFBF8; --ink: #22261F; --muted: #5C6257; --line: #D8DBD0;
+  --olive: #56663A; --olive-soft: #E3E8D6; --amber: #A86A22; --amber-soft: #F3E5D0; --chat-bg: #ECEEE6;
+  --font-serif: 'Frank Ruhl Libre', 'David Libre', Georgia, serif;
+  --font-ui: 'Assistant', 'Heebo', system-ui, sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --shadow-print: 0 1px 2px rgba(34, 38, 31, .08), 0 8px 24px -8px rgba(34, 38, 31, .18);
+  --gutter: 16px;
+}
+@media (min-width: 900px) { :root { --gutter: 72px; } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161915; --surface: #1F231D; --ink: #ECEDE6; --muted: #A4A99A; --line: #353B31;
+    --olive: #A9BC84; --olive-soft: #2B3324; --amber: #E2A95E; --amber-soft: #3A2E1E; --chat-bg: #1A1E18;
+    --shadow-print: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -8px rgba(0, 0, 0, .6);
+  }
+}
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--font-ui); -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--olive-soft); color: var(--ink); }
+:focus-visible { outline: 3px solid var(--olive); outline-offset: 3px; border-radius: 4px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }

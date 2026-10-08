@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>אופיר · שיחה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/tokens.css">
+<style>
+:root { --w: 760px; --ch: 0px; --amber-ink: #86500F; --modebar-h: 40px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --amber-ink: #E2A95E; } }
+body { overflow-wrap: anywhere; }
+@media (min-width: 900px) { body[data-mode="album"] { --w: 980px; } }
+.shell { max-width: var(--w); margin-inline: auto; background: var(--chat-bg); min-height: 100vh;
+  border-inline: 1px solid var(--line); padding-block-end: calc(var(--ch) + var(--modebar-h) + 28px); transition: max-width .6s var(--ease); }
+button { background: none; border: 0; padding: 0; }
+.serif { font-family: var(--font-serif); }
+
+/* header */
+.head { display: flex; gap: 14px; align-items: center; padding: 22px var(--gutter) 14px; }
+.head .paper { width: 52px; flex: none; }
+.head h1 { font: 500 28px/1.15 var(--font-serif); margin: 0; }
+.head p { margin: 2px 0 0; color: var(--muted); font-size: 16px; line-height: 1.45; }
+.head bdi { color: var(--muted); }
+
+/* sticky bar */
+.bar { position: sticky; top: 0; z-index: 20; background: var(--chat-bg); border-block-end: 1px solid var(--line);
+  padding: 8px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 60px; }
+.seg { display: inline-flex; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { min-height: 44px; padding-inline: 20px; border-radius: 999px; font-size: 17px; font-weight: 600; color: var(--muted); transition: background .5s var(--ease), color .5s var(--ease); }
+.seg button[aria-pressed="true"] { background: var(--olive); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg button[aria-pressed="true"] { color: #161915; } }
+.bar .quiet { color: var(--muted); font-size: 15px; }
+.pubbar { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 10px; }
+.adminbar { display: none; width: 100%; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.adminbar p { margin: 0; font-size: 18px; font-weight: 600; }
+body[data-view="admin"] .adminbar { display: flex; }
+body[data-view="admin"] .pubbar { display: none; }
+
+/* pills */
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding-inline: 22px; border-radius: 999px;
+  border: 1.5px solid var(--olive); color: var(--olive); font-weight: 700; font-size: 18px; background: transparent; }
+.pill.solid { background: var(--olive); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pill.solid { color: #161915; } }
+.pill:hover { background: var(--olive-soft); } .pill.solid:hover { filter: brightness(1.08); background: var(--olive); }
+
+/* prints */
+.paper { background: var(--surface); border: 1px solid var(--line); padding: 5px; box-shadow: var(--shadow-print); }
+.paper img { width: 100%; height: auto; }
+.ph { margin: 0; min-width: 0; }
+.ph figcaption { font-size: 14px; color: var(--muted); margin-block-start: 6px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.stack .ph { width: min(100%, calc(66vh * var(--r))); }
+.cluster { display: flex; gap: 10px; align-items: flex-start; }
+.cluster .ph { flex: var(--r) 1 0; }
+.cluster.one .ph { flex: none; width: min(62%, calc(46vh * var(--r))); }
+
+/* stream */
+.stream { padding: 22px var(--gutter) 8px; display: flex; flex-direction: column; gap: 22px; transition: opacity .3s ease; }
+.stream.fading { opacity: .2; }
+@keyframes settle { from { opacity: .3; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.stream.anim > * { animation: settle .8s var(--ease) both; animation-delay: calc(var(--i, 0) * 80ms); }
+.msg { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.msg.fam, .msg.me { align-items: flex-end; }
+.bub { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px 14px; max-width: min(94%, 600px); min-width: 0; transition: background 1.2s ease; }
+.msg.fam .bub { background: var(--olive-soft); border-color: transparent; }
+.msg.flash .bub { background: var(--olive-soft); }
+.msg.pend .bub { background: transparent; border: 1.5px dashed var(--olive); }
+.who { display: flex; align-items: baseline; gap: 10px; margin-block-end: 6px; }
+.nm { font-weight: 700; color: var(--olive); font-size: 17px; }
+.msg.fam .nm { color: var(--amber-ink); }
+.tm { font-size: 14px; color: var(--muted); }
+.bub .stack, .bub .cluster { margin-block-end: 10px; }
+.tx { margin: 0; font: 400 19px/1.65 var(--font-serif); max-width: 34em; }
+.wait { margin: 10px 0 0; font-size: 15px; font-weight: 600; color: var(--amber-ink); }
+.pinslot { padding-block-end: 22px; border-block-end: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.pinslot h2 { margin: 0; font: 500 19px/1.3 var(--font-serif); color: var(--olive); }
+
+/* album */
+.album { column-count: 2; column-gap: 18px; padding: 22px var(--gutter) 8px; }
+.album .al { display: block; width: 100%; text-align: start; break-inside: avoid; margin-block-end: 20px; }
+.album .al .paper { transition: transform .5s var(--ease); }
+.album .al:hover .paper { transform: translateY(-2px); }
+.album .al.pend .paper { background: transparent; border: 1.5px dashed var(--olive); box-shadow: none; }
+.album .al .w { font-size: 14px; color: var(--amber-ink); font-weight: 600; }
+.album.anim > * { animation: settle .9s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
+
+/* admin */
+.decide { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-block-start: 12px; width: min(100%, 600px); }
+.bigbtn { min-height: 60px; border-radius: 999px; font-size: 20px; font-weight: 700; padding-inline: 14px; border: 2px solid var(--olive); }
+.bigbtn.yes { background: var(--olive); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bigbtn.yes { color: #161915; } }
+.bigbtn.no { background: transparent; color: var(--ink); border-color: var(--muted); }
+.hint { margin: 8px 0 0; font-size: 16px; color: var(--muted); }
+.adm { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-block-start: 6px; width: min(100%, 600px); }
+.adm .pill { min-height: 52px; font-size: 18px; }
+.adm .cur { font-size: 16px; color: var(--muted); }
+.hiddenlist { padding-block-start: 10px; border-block-start: 1px solid var(--line); }
+.hiddenlist h2 { font: 500 21px/1.3 var(--font-serif); margin: 14px 0 8px; }
+.hiddenlist .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; font-size: 18px; }
+.hiddenlist .row span { min-width: 0; }
+.hiddenlist p { margin: 0; color: var(--muted); font-size: 18px; }
+
+/* composer */
+.composer { position: fixed; inset-inline: 0; bottom: var(--modebar-h); margin-inline: auto; width: min(100%, var(--w)); z-index: 30;
+  background: var(--surface); border-block-start: 1px solid var(--line); box-shadow: 0 -10px 30px -18px rgba(34,38,31,.35);
+  max-height: 66vh; overflow-y: auto; transition: width .6s var(--ease); }
+body[data-view="admin"] .composer { display: none; }
+.c-in { padding: 12px var(--gutter) 14px; }
+@media (max-width: 899px) { .c-in { padding-inline: 14px; } }
+.row1 { display: flex; gap: 10px; align-items: flex-end; }
+.cam { flex: none; min-height: 52px; padding-inline: 18px; border-radius: 999px; background: var(--olive-soft); color: var(--olive); border: 1.5px solid var(--olive); display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; }
+.cam:hover { background: var(--olive); color: #fff; }
+.cam svg { width: 26px; height: 26px; }
+.field { flex: 1; min-width: 0; }
+textarea, input.nmi { width: 100%; font: 400 18px/1.5 var(--font-ui); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; resize: none; }
+textarea { min-height: 52px; max-height: 140px; display: block; font-family: var(--font-serif); font-size: 19px; }
+textarea:focus, input.nmi:focus { outline: 3px solid var(--olive); outline-offset: 1px; border-color: var(--olive); }
+.open-only { display: none; }
+.composer.open .open-only { display: block; }
+.tray { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 12px; align-items: flex-start; }
+.pv { position: relative; flex: none; height: 78px; aspect-ratio: var(--r); }
+.pv .paper { height: 100%; padding: 4px; }
+.pv img { height: 100%; width: 100%; object-fit: contain; }
+.pv .rm { position: absolute; inset-block-end: 8px; inset-inline-end: 8px; min-height: 36px; padding-inline: 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 15px; font-weight: 600; }
+.pv .rm::after { content: ""; position: absolute; inset: -6px; }
+.pv .paper { transition: opacity .4s ease; }
+.cnt { font-size: 15px; color: var(--muted); margin: 0 0 4px; }
+.lbl { display: block; font-weight: 700; font-size: 17px; margin-block-end: 6px; }
+.lbl small { font-weight: 400; color: var(--muted); font-size: 15px; }
+.err { margin: 6px 0 0; color: #9B3B22; font-size: 16px; font-weight: 600; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .err { color: #F0A58F; } }
+.known { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 17px; margin-block: 10px; }
+.known .lnk { text-decoration: underline; color: var(--olive); font-weight: 600; min-height: 44px; padding-inline: 6px; }
+.note { margin: 8px 0 0; padding: 6px 14px; border-radius: 12px; background: var(--amber-soft); color: var(--amber-ink); font-size: 16px; font-weight: 600; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .note { color: var(--amber); } }
+.sendrow { margin-block-start: 10px; }
+.sendrow .pill { width: 100%; min-height: 56px; font-size: 20px; }
+.thanks { display: none; padding-block: 8px 4px; text-align: start; }
+.composer.done .thanks { display: block; }
+.composer.done .form { display: none; }
+.thanks p { margin: 0 0 12px; }
+.thanks .big { font: 500 26px/1.3 var(--font-serif); }
+.thanks .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* design-mode switch (not part of the product) */
+.dview { position: fixed; inset-inline: 0; bottom: 0; height: var(--modebar-h); z-index: 50; background: var(--bg); border-block-start: 1px dashed var(--muted);
+  display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 14px; color: var(--muted); }
+.dview button { min-height: 32px; padding-inline: 14px; border-radius: 6px; font-size: 14px; color: var(--muted); }
+.dview button[aria-pressed="true"] { color: var(--ink); background: var(--line); font-weight: 700; }
+
+/* toast */
+.toast { position: fixed; inset-inline: 0; margin-inline: auto; bottom: calc(var(--modebar-h) + 14px); width: min(calc(100% - 24px), 480px); z-index: 60;
+  background: var(--ink); color: var(--bg); border-radius: 12px; padding: 10px 12px 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 18px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .4s ease, transform .5s var(--ease); }
+.toast.on { opacity: 1; pointer-events: auto; transform: none; }
+.toast button { min-height: 48px; padding-inline: 20px; border-radius: 999px; background: var(--bg); color: var(--ink); font-weight: 700; font-size: 18px; flex: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (min-width: 900px) { .stream { gap: 26px; } .head h1 { font-size: 32px; } }
+</style>
+</head>
+<body data-view="site" data-mode="chat">
+
+<div class="shell">
+  <header class="head">
+    <div class="paper"><img id="portrait" alt="אופיר (תמונה לדוגמה)"></div>
+    <div>
+      <h1>אופיר</h1>
+      <p><bdi dir="ltr">19XX – 20XX</bdi> · אח, חבר, בן אדם שידע להקשיב.</p>
+    </div>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="pubbar">
+      <div class="seg" role="group" aria-label="צורת הצפייה">
+        <button type="button" data-mode="chat" aria-pressed="true">שיחה</button>
+        <button type="button" data-mode="album" aria-pressed="false">רק תמונות</button>
+      </div>
+      <span class="quiet" id="count"></span>
+    </div>
+    <div class="adminbar">
+      <p id="adminmsg"></p>
+      <button type="button" class="pill solid" id="nextwait">להמשיך להודעה הבאה</button>
+    </div>
+  </div>
+
+  <main id="stream" class="stream" aria-live="polite"></main>
+</div>
+
+<section class="composer" id="composer" aria-label="לשתף זיכרון">
+  <div class="c-in">
+    <div class="thanks" role="status">
+      <p class="big">קיבלנו. תודה ששיתפתם.</p>
+      <p>המשפחה תעבור על זה ותאשר. עד אז זה מופיע בשיחה רק לך, מסומן בקו מקווקו.</p>
+      <div class="btns"><button type="button" class="pill solid" id="more">להוסיף עוד</button><button type="button" class="pill" id="closeThanks">לסגור</button></div>
+    </div>
+    <div class="form">
+      <div class="open-only">
+        <p class="cnt" id="cnt" hidden></p>
+        <div class="tray" id="tray" hidden></div>
+      </div>
+      <div class="row1">
+        <button type="button" class="cam" id="camBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5a1.5 1.5 0 0 1 1.5-1.5h2.2l1.3-2h7l1.3 2H19a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 19H5a1.5 1.5 0 0 1-1.5-1.5z"/><circle cx="12" cy="13" r="3.6"/></svg>
+          <span>תמונות</span>
+        </button>
+        <input type="file" id="pick" class="sr" multiple accept="image/*" tabindex="-1" aria-label="בחירת תמונות מהמכשיר">
+        <div class="field"><label for="txt" class="sr">מה אתם זוכרים?</label><textarea id="txt" rows="1" dir="auto" placeholder="מה אתם זוכרים?"></textarea></div>
+      </div>
+      <div class="open-only" id="whoWrap">
+        <div id="whoNew" style="margin-block-start:12px">
+          <label class="lbl" for="nm">השם שלכם <small>(חובה, כדי שהמשפחה תדע ממי)</small></label>
+          <input class="nmi" id="nm" dir="auto" autocomplete="name" aria-required="true" aria-describedby="nmErr" placeholder="למשל: דנה">
+        </div>
+        <div class="known" id="whoKnown" hidden>
+          <span>שולחים בשם <strong id="knownName" dir="auto"></strong></span>
+          <button type="button" class="lnk" id="changeName">לשנות שם</button>
+        </div>
+        <p class="err" id="nmErr" role="alert" hidden></p>
+        <p class="note">המשפחה מאשרת לפני שזה מופיע באתר. תמונות ומילים אפשר לשלוח גם לחוד.</p>
+        <div class="sendrow"><button type="button" class="pill solid" id="send">לשלוח למשפחה</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status"><span id="toastMsg"></span><button type="button" id="undo">ביטול</button></div>
+
+<nav class="dview" aria-label="תצוגת עיצוב">
+  <span>תצוגת עיצוב:</span>
+  <button type="button" data-view="site" aria-pressed="true">אתר</button>
+  <button type="button" data-view="contrib" aria-pressed="false">תרומה</button>
+  <button type="button" data-view="admin" aria-pressed="false">ניהול</button>
+</nav>
+
+<script src="shared/data.js"></script>
+<script src="shared/photos.js"></script>
+<script>
+(function () {
+  var O = window.OFIR, C = O.copy;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function P(id) { var p = O.byId(id); return { src: p.src, ratio: p.ratio, by: p.by, alt: p.caption + ' (תמונה לדוגמה)' }; }
+
+  $('#portrait').src = O.byId('p01').src;
+  $('#portrait').style.aspectRatio = '4 / 5';
+
+  /* ---- data ---- */
+  var M = {}; O.messages.forEach(function (m) { M[m.id] = { id: m.id, name: m.name, time: m.time, text: m.text, family: !!m.family, photos: m.photo ? [P(m.photo)] : [], status: 'approved' }; });
+  function X(id, name, time, ph) { return { id: id, name: name, time: time, text: '', photos: [P(ph)], status: 'approved' }; }
+  O.queue.forEach(function (q) { M[q.id] = { id: q.id, name: q.name, time: q.time, text: q.text, photos: q.photos.map(P), status: 'waiting' }; });
+  M.x1 = X('x1', 'איתי', 'אתמול', 'p08'); M.x2 = X('x2', 'איתי', 'אתמול', 'p11');
+  M.x3 = X('x3', 'רועי', 'לפני 3 שעות', 'p05'); M.x4 = X('x4', 'יובל', 'לפני שעתיים', 'p03');
+  var items = ['m1', 'm2', 'm3', 'x1', 'x2', 'q-4', 'm4', 'x3', 'q-3', 'x4', 'm5', 'q-2', 'm6', 'q-1'].map(function (k) { return M[k]; });
+  var pinnedId = 'm1', view = 'site', mode = 'chat', uid = 0;
+  var name = '', editingName = false, tray = [];
+  try { name = localStorage.getItem('ofir-name') || ''; } catch (e) {}
+
+  /* ---- rendering ---- */
+  function photoFig(p, extra) {
+    return '<figure class="ph" style="--r:' + p.ratio + '"><div class="paper"><img src="' + p.src + '" alt="' + esc(p.alt) + '" style="aspect-ratio:' + p.ratio + '" loading="lazy"></div>' +
+      '<figcaption>צולם ע״י <span dir="auto">' + esc(p.by) + '</span></figcaption></figure>';
+  }
+  function isBig(m) { return m.big === undefined ? !!m.text : m.big; }
+  function photosHTML(m) {
+    if (!m.photos.length) return '';
+    if (isBig(m)) return '<div class="stack">' + m.photos.map(photoFig).join('') + '</div>';
+    return '<div class="cluster' + (m.photos.length === 1 ? ' one' : '') + '">' + m.photos.map(photoFig).join('') + '</div>';
+  }
+  function controls(m, ctx) {
+    if (ctx !== 'admin') return '';
+    if (m.status === 'waiting' || m.status === 'mine') {
+      return '<div class="decide"><button type="button" class="bigbtn yes" data-act="approve" data-id="' + m.id + '">' + C.show + '</button>' +
+        '<button type="button" class="bigbtn no" data-act="hide" data-id="' + m.id + '">' + C.hide + '</button></div>' +
+        '<p class="hint">מי ששלח לא יקבל על כך הודעה.</p>';
+    }
+    var h = '<div class="adm">';
+    if (m.photos.length) h += '<button type="button" class="pill" data-act="big" data-id="' + m.id + '">' + (isBig(m) ? 'להציג רגיל' : 'להציג בגדול') + '</button>';
+    h += m.id === pinnedId ? '<button type="button" class="pill" data-act="unpin" data-id="' + m.id + '">להסיר הצמדה</button>' : '<button type="button" class="pill" data-act="pin" data-id="' + m.id + '">להצמיד למעלה</button>';
+    h += '<button type="button" class="pill" data-act="hide" data-id="' + m.id + '">להסתיר מהאתר</button>';
+    if (m.photos.length) h += '<span class="cur">כרגע: ' + (isBig(m) ? 'גדולה' : 'רגילה') + '</span>';
+    return h + '</div>';
+  }
+  function msgHTML(m, ctx) {
+    var pend = m.status === 'waiting' || m.status === 'mine';
+    var cls = 'msg' + (m.family ? ' fam' : '') + (m.status === 'mine' ? ' me' : '') + (pend ? ' pend' : '');
+    var waitTxt = ctx === 'admin' ? 'ממתין להחלטה שלכם' : C.waiting;
+    return '<article class="' + cls + '" id="msg-' + m.id + '"><div class="bub"><header class="who"><span class="nm" dir="auto">' + esc(m.name) + '</span><span class="tm">' + esc(m.time) + '</span></header>' +
+      photosHTML(m) + (m.text ? '<p class="tx" dir="auto">' + esc(m.text) + '</p>' : '') +
+      (pend ? '<p class="wait">' + waitTxt + '</p>' : '') + '</div>' + controls(m, ctx) + '</article>';
+  }
+  function group(list) {
+    var out = [];
+    list.forEach(function (m) {
+      var po = m.status === 'approved' && !m.text && m.photos.length && !isBig(m) && !m.family;
+      var last = out[out.length - 1];
+      if (po && last && last._po && last.name === m.name) last.photos = last.photos.concat(m.photos);
+      else out.push(Object.assign({}, m, { _po: po }));
+    });
+    return out;
+  }
+  function stagger(el) { Array.prototype.forEach.call(el.children, function (c, i) { c.style.setProperty('--i', Math.min(i, 6)); }); }
+
+  function render(anim) {
+    var s = $('#stream'), html = '';
+    var pubCount = 0;
+    items.forEach(function (m) { if (m.status === 'approved') pubCount += m.photos.length; });
+    $('#count').textContent = pubCount + ' תמונות';
+    if (view === 'admin') {
+      var pin = items.filter(function (m) { return m.id === pinnedId && m.status === 'approved'; })[0];
+      if (pin) html += '<section class="pinslot"><h2>הדבר שהמשפחה רוצה שיקראו קודם</h2>' + msgHTML(pin, 'admin') + '</section>';
+      items.forEach(function (m) { if (m !== pin && m.status !== 'hidden') html += msgHTML(m, 'admin'); });
+      var hid = items.filter(function (m) { return m.status === 'hidden'; });
+      html += '<section class="hiddenlist"><h2>לא מוצגים באתר</h2>' + (hid.length ? hid.map(function (m) {
+        return '<div class="row"><span dir="auto">' + esc(m.name) + (m.text ? ' · ' + esc(m.text.slice(0, 28)) + '…' : ' · ' + m.photos.length + ' תמונות') + '</span><button type="button" class="pill" data-act="restore" data-id="' + m.id + '">להחזיר לאתר</button></div>';
+      }).join('') : '<p>כרגע אין כאלה.</p>') + '</section>';
+      var n = items.filter(function (m) { return m.status === 'waiting' || m.status === 'mine'; }).length;
+      $('#adminmsg').textContent = n ? 'יש ' + n + ' הודעות שמחכות להחלטה שלכם' : 'אין מה שמחכה לכם. תודה.';
+      $('#nextwait').style.display = n ? '' : 'none';
+      s.className = 'stream' + (anim ? ' anim' : '');
+    } else {
+      var vis = items.filter(function (m) { return m.status === 'approved' || m.status === 'mine'; });
+      var pn = vis.filter(function (m) { return m.id === pinnedId && m.status === 'approved'; })[0];
+      var rest = vis.filter(function (m) { return m !== pn; });
+      if (mode === 'album') {
+        var all = (pn ? [pn] : []).concat(rest), al = '';
+        all.forEach(function (m) {
+          m.photos.forEach(function (p) {
+            var pend = m.status === 'mine';
+            al += '<button type="button" class="al' + (pend ? ' pend' : '') + '" data-goto="' + m.id + '" aria-label="לפתוח את ההודעה בשיחה"><figure class="ph" style="--r:' + p.ratio + '"><div class="paper"><img src="' + p.src + '" alt="' + esc(p.alt) + '" style="aspect-ratio:' + p.ratio + '" loading="lazy"></div>' +
+              '<figcaption style="white-space:normal">צולם ע״י <span dir="auto">' + esc(p.by) + '</span>' + (pend ? '<br><span class="w">ממתין לאישור המשפחה · רק את/ה רואה</span>' : '') + '</figcaption></figure></button>';
+          });
+        });
+        s.className = 'album' + (anim ? ' anim' : '');
+        html = al;
+      } else {
+        if (pn) html += '<section class="pinslot"><h2>הדבר שהמשפחה רוצה שיקראו קודם</h2>' + msgHTML(pn, 'pub') + '</section>';
+        group(rest).forEach(function (m) { html += msgHTML(m, 'pub'); });
+        s.className = 'stream' + (anim ? ' anim' : '');
+      }
+    }
+    s.innerHTML = html;
+    if (anim) stagger(s);
+  }
+
+  /* ---- mode (chat / album) ---- */
+  function setMode(m, instant) {
+    mode = m; document.body.dataset.mode = m;
+    document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === m); });
+    var s = $('#stream');
+    if (instant || reduce) { render(true); return; }
+    s.classList.add('fading');
+    setTimeout(function () { render(true); s.classList.remove('fading'); }, 260);
+  }
+  document.querySelectorAll('.seg button').forEach(function (b) { b.addEventListener('click', function () { if (view === 'admin') return; setMode(b.dataset.mode); window.scrollTo({ top: 0 }); }); });
+
+  /* ---- view switch ---- */
+  var comp = $('#composer');
+  function setView(v) {
+    view = v; document.body.dataset.view = v;
+    document.querySelectorAll('.dview button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.view === v); });
+    comp.classList.remove('done');
+    tray = tray.filter(function (t) { return !t.demo; });
+    if (v !== 'site') mode = 'chat';
+    document.body.dataset.mode = mode;
+    document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === mode); });
+    if (v === 'contrib') {
+      editingName = true; $('#nm').value = '';
+      tray = [{ src: O.scene('sea', 3, 2, 1), ratio: 1.5, by: '', demo: true }, { src: O.scene('hills', 4, 3, 4), ratio: 4 / 3, by: '', demo: true }, { src: O.scene('portrait', 4, 5, 3), ratio: .8, by: '', demo: true }];
+      openComposer();
+    } else { closeComposer(); }
+    render(true); drawTray(); fit();
+    if (v === 'contrib') window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduce ? 'auto' : 'smooth' }); else window.scrollTo({ top: 0 });
+  }
+  document.querySelectorAll('.dview button').forEach(function (b) { b.addEventListener('click', function () { setView(b.dataset.view); }); });
+
+  /* ---- composer ---- */
+  function openComposer() { comp.classList.add('open'); updateWho(); fit(); }
+  function closeComposer() { comp.classList.remove('open'); fit(); }
+  function updateWho() {
+    var known = name && !editingName;
+    $('#whoNew').hidden = known; $('#whoKnown').hidden = !known;
+    $('#knownName').textContent = name;
+  }
+  function drawTray() {
+    var t = $('#tray'), c = $('#cnt');
+    t.hidden = !tray.length; c.hidden = !tray.length;
+    c.textContent = tray.length === 1 ? 'תמונה אחת מוכנה' : tray.length + ' תמונות מוכנות';
+    t.innerHTML = tray.map(function (p, i) {
+      return '<div class="pv" style="--r:' + p.ratio + '"><div class="paper"><img src="' + p.src + '" alt="תצוגה מקדימה של התמונה שבחרתם"></div><button type="button" class="rm" data-i="' + i + '">הסרה</button></div>';
+    }).join('');
+    fit();
+  }
+  $('#tray').addEventListener('click', function (e) { var b = e.target.closest('.rm'); if (!b) return; tray.splice(+b.dataset.i, 1); drawTray(); });
+  $('#camBtn').addEventListener('click', function () { $('#pick').click(); });
+  $('#pick').addEventListener('change', function (e) {
+    var files = Array.prototype.slice.call(e.target.files || []);
+    if (!files.length) return;
+    tray = tray.filter(function (t) { return !t.demo; });
+    files.forEach(function (f) {
+      var item = { src: URL.createObjectURL(f), ratio: 1.5, by: '' };
+      tray.push(item);
+      var im = new Image(); im.onload = function () { if (im.naturalWidth) { item.ratio = im.naturalWidth / im.naturalHeight; drawTray(); } }; im.src = item.src;
+    });
+    comp.classList.remove('done'); openComposer(); drawTray(); e.target.value = '';
+  });
+  var txt = $('#txt');
+  function autosize() { txt.style.height = 'auto'; txt.style.height = Math.min(txt.scrollHeight, 140) + 'px'; fit(); }
+  txt.addEventListener('input', autosize);
+  txt.addEventListener('focus', function () { openComposer(); });
+  $('#changeName').addEventListener('click', function () { editingName = true; updateWho(); $('#nm').value = name; $('#nm').focus(); });
+  $('#nm').addEventListener('input', function () { $('#nmErr').hidden = true; });
+
+  function fit() { document.documentElement.style.setProperty('--ch', (view === 'admin' ? 0 : comp.offsetHeight) + 'px'); }
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(comp);
+  window.addEventListener('resize', fit);
+
+  function send() {
+    var nm = ($('#whoNew').hidden ? name : $('#nm').value.trim());
+    var words = txt.value.trim(), err = $('#nmErr');
+    if (!nm) { err.textContent = 'נשמח לדעת מי אתם, כדי שהמשפחה תדע ממי זה.'; err.hidden = false; $('#nm').focus(); return; }
+    if (!tray.length && !words) { err.textContent = 'בחרו תמונה או כתבו מילה, ואז נשלח.'; err.hidden = false; txt.focus(); return; }
+    err.hidden = true;
+    name = nm; editingName = false;
+    try { localStorage.setItem('ofir-name', name); } catch (e) {}
+    items.push({ id: 'u' + (++uid), name: nm, time: 'עכשיו', text: words, photos: tray.map(function (t) { return { src: t.src, ratio: t.ratio, by: nm, alt: 'תמונה ששיתפתם' }; }), status: 'mine' });
+    tray = []; txt.value = ''; autosize(); drawTray();
+    comp.classList.add('done'); updateWho();
+    var wasAlbum = mode === 'album'; if (wasAlbum) { mode = 'chat'; document.body.dataset.mode = 'chat'; document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === 'chat'); }); }
+    render(false); fit();
+    var el = $('#msg-u' + uid); if (el) { el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 2200); el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }); }
+  }
+  $('#send').addEventListener('click', send);
+  $('#more').addEventListener('click', function () { comp.classList.remove('done'); openComposer(); $('#camBtn').focus(); });
+  $('#closeThanks').addEventListener('click', function () { comp.classList.remove('done'); closeComposer(); });
+
+  /* ---- album -> chat ---- */
+  $('#stream').addEventListener('click', function (e) {
+    var g = e.target.closest('[data-goto]');
+    if (g) {
+      var id = g.dataset.goto; mode = 'chat'; document.body.dataset.mode = 'chat';
+      document.querySelectorAll('.seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === 'chat'); });
+      var s = $('#stream'); s.classList.add('fading');
+      setTimeout(function () {
+        render(false); s.classList.remove('fading');
+        var el = document.getElementById('msg-' + id);
+        if (!el) { var gm = items.filter(function (m) { return m.id === id; })[0]; }
+        if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }
+      }, reduce ? 0 : 260);
+      return;
+    }
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    act(b.dataset.act, b.dataset.id);
+  });
+
+  /* ---- admin actions with undo ---- */
+  var snap = null, tt = null;
+  function toast(msg) {
+    $('#toastMsg').textContent = msg; $('#toast').classList.add('on');
+    clearTimeout(tt); tt = setTimeout(function () { $('#toast').classList.remove('on'); snap = null; }, 5000);
+  }
+  function act(a, id) {
+    var m = items.filter(function (x) { return x.id === id; })[0]; if (!m) return;
+    snap = { items: items.map(function (x) { return Object.assign({}, x); }), pinnedId: pinnedId };
+    var msg = '';
+    if (a === 'approve') { m.status = 'approved'; msg = 'ההודעה של ' + m.name + ' מוצגת באתר'; }
+    if (a === 'hide') { m.status = 'hidden'; if (pinnedId === id) pinnedId = null; msg = 'ההודעה של ' + m.name + ' לא תוצג באתר'; }
+    if (a === 'restore') { m.status = 'approved'; msg = 'ההודעה של ' + m.name + ' חזרה לאתר'; }
+    if (a === 'big') { m.big = !isBig(m); msg = isBig(m) ? 'התמונה תוצג בגדול' : 'התמונה תוצג רגיל'; }
+    if (a === 'pin') { pinnedId = id; msg = 'ההודעה של ' + m.name + ' הוצמדה למעלה'; }
+    if (a === 'unpin') { pinnedId = null; msg = 'ההצמדה הוסרה'; }
+    var y = window.scrollY; render(false); window.scrollTo({ top: y });
+    toast(msg);
+  }
+  $('#undo').addEventListener('click', function () {
+    if (!snap) return;
+    items = snap.items; pinnedId = snap.pinnedId; snap = null;
+    $('#toast').classList.remove('on'); clearTimeout(tt);
+    var y = window.scrollY; render(false); window.scrollTo({ top: y });
+  });
+  $('#nextwait').addEventListener('click', function () {
+    var el = document.querySelector('.msg.pend'); if (el) el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  setView('site');
+})();
+</script>
+</body>
+</html>

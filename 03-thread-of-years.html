@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>חוט השנים · אופיר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/tokens.css">
+<script src="shared/data.js"></script>
+<script src="shared/photos.js"></script>
+<style>
+html { scroll-behavior: smooth; }
+body { padding-block-end: 64px; overflow-x: hidden; }
+.serif { font-family: var(--font-serif); }
+button, input, select, textarea { font-family: var(--font-ui); }
+[hidden] { display: none !important; }
+svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* pills */
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-block-size: 48px; padding-inline: 22px; border-radius: 999px; border: 1.5px solid var(--olive); background: transparent; color: var(--olive); font-weight: 600; font-size: 17px; transition: background .4s var(--ease), color .4s var(--ease); }
+.pill:hover { background: var(--olive-soft); }
+.pill.solid { background: var(--olive); color: var(--surface); }
+.pill.solid:hover { background: var(--olive); filter: brightness(1.08); }
+.pill.quiet { border-color: transparent; color: var(--muted); font-weight: 400; }
+.pill.big { min-block-size: 60px; font-size: 19px; padding-inline: 30px; }
+
+/* ===== site ===== */
+.top { position: sticky; inset-block-start: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 96%, transparent); border-block-end: 1px solid var(--line); }
+.top-in { max-inline-size: 1000px; margin-inline: auto; padding-inline: 16px; min-block-size: 58px; display: flex; align-items: center; justify-content: space-between; gap: 10px; position: relative; }
+.chip { display: inline-flex; align-items: center; gap: 8px; min-block-size: 48px; padding-inline: 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+.chip .y { font: 500 22px/1 var(--font-serif); color: var(--olive); }
+.chip .t { color: var(--muted); font-size: 16px; }
+.chip svg { width: 16px; height: 16px; transition: transform .4s var(--ease); }
+.chip[aria-expanded="true"] svg { transform: rotate(180deg); }
+.menu { position: absolute; inset-block-start: 56px; inset-inline-start: 16px; z-index: 30; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-print); padding: 6px; min-inline-size: 220px; }
+.menu button { display: flex; gap: 10px; align-items: baseline; inline-size: 100%; min-block-size: 48px; padding-inline: 14px; border: 0; background: none; border-radius: 8px; text-align: start; font-size: 17px; }
+.menu button:hover, .menu button[aria-current="true"] { background: var(--olive-soft); }
+.menu .y { font: 500 20px var(--font-serif); color: var(--olive); min-inline-size: 3ch; }
+.add-short { font-size: 16px; padding-inline: 18px; }
+
+.index { display: none; }
+@media (min-width: 1100px) {
+  .index { display: flex; flex-direction: column; position: fixed; inset-inline-start: 28px; inset-block-start: 50%; transform: translateY(-50%); z-index: 10; gap: 2px; }
+  .index button { border: 0; background: none; min-block-size: 48px; padding-inline: 10px; text-align: start; color: var(--muted); font: 400 18px var(--font-serif); transition: color .7s var(--ease), font-size .7s var(--ease); display: flex; align-items: center; gap: 10px; }
+  .index button::before { content: ""; inline-size: 14px; block-size: 1px; background: var(--line); transition: inline-size .7s var(--ease), background .7s var(--ease); }
+  .index button[aria-current="true"] { color: var(--olive); font-weight: 700; font-size: 22px; }
+  .index button[aria-current="true"]::before { inline-size: 26px; background: var(--olive); }
+}
+
+main { max-inline-size: 1000px; margin-inline: auto; padding-inline: 16px; }
+.hero { text-align: center; padding-block: 48px 36px; display: flex; flex-direction: column; align-items: center; }
+.hero .print { inline-size: min(76%, 290px); }
+.hero h1 { font: 500 clamp(52px, 14vw, 76px)/1.05 var(--font-serif); margin: 28px 0 6px; letter-spacing: .01em; }
+.hero .dates { color: var(--muted); font-size: 18px; }
+.hero .bio { font: 400 clamp(20px, 5vw, 24px)/1.6 var(--font-serif); max-inline-size: 28em; margin: 18px 0 0; text-wrap: balance; }
+.hero .begin { margin-block-start: 22px; color: var(--muted); font-size: 16px; }
+
+/* print = a photograph on paper */
+.print { margin: 0; background: var(--surface); border: 1px solid var(--line); padding: 8px 8px 8px; box-shadow: var(--shadow-print); }
+.print img { inline-size: 100%; block-size: auto; }
+.print figcaption { font: 400 16px/1.5 var(--font-serif); color: var(--muted); padding: 8px 2px 2px; }
+.credit { display: block; font-size: 15px; color: var(--muted); margin-block-start: 8px; }
+
+/* thread */
+.thread { position: relative; padding-block-end: 8px; }
+.thread::before { content: ""; position: absolute; inset-block: 0; inset-inline-start: 11px; inline-size: 1px; background: var(--olive); opacity: .55; }
+.chap { position: relative; padding-inline-start: 44px; padding-block-end: 36px; scroll-margin-block-start: 70px; }
+.chap .dot { position: absolute; inset-inline-start: 5px; inset-block-start: 20px; inline-size: 13px; block-size: 13px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--olive); transition: background .8s var(--ease), box-shadow .8s var(--ease); }
+.chap.current .dot { background: var(--olive); box-shadow: 0 0 0 4px var(--olive-soft); }
+.yr { padding-block: 10px 6px; }
+.yr h2 { margin: 0; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; font-family: var(--font-serif); font-weight: 500; }
+.yr .num { font-size: 50px; line-height: 1.1; color: var(--muted); opacity: .75; transition: color .9s var(--ease), opacity .9s var(--ease), font-weight .9s; }
+.yr .ttl { font-size: 24px; color: var(--ink); }
+.chap.current .num { color: var(--olive); opacity: 1; font-weight: 700; }
+.chap .lead { font: 400 19px/1.65 var(--font-serif); max-inline-size: 30em; margin: 4px 0 26px; color: var(--ink); }
+.hang { position: relative; margin-block-end: 34px; max-inline-size: 440px; }
+.hang::before { content: ""; position: absolute; inset-block-start: 26px; inset-inline-start: -32px; inline-size: 32px; block-size: 1px; background: var(--olive); opacity: .55; }
+.hang .print + .print { margin-block-start: 16px; }
+.words { margin: 14px 0 0; font: 400 20px/1.65 var(--font-serif); text-wrap: pretty; }
+.print + .words { margin-block-start: 16px; }
+.by { margin: 8px 0 0; font-size: 16px; color: var(--muted); }
+.by b { color: var(--olive); font-weight: 600; }
+.by.fam b { color: var(--amber); }
+.pre { opacity: .3; transform: translateY(14px); }
+.pre.in { opacity: 1; transform: none; transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
+.arrive { animation: arrive 1.4s var(--ease) both; }
+@keyframes arrive { from { opacity: .15; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+/* waiting (mine) */
+.waiting .print { border: 1.5px dashed var(--muted); background: transparent; box-shadow: none; }
+.waiting .words.only { border: 1.5px dashed var(--muted); border-radius: 12px; padding: 14px 16px; }
+.wait-note { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 0; color: var(--amber); font-size: 16px; font-weight: 600; line-height: 1.45; }
+.wait-note svg { margin-block-start: 2px; }
+
+.prompt { display: inline-flex; align-items: center; gap: 10px; min-block-size: 48px; padding-block: 6px; padding-inline: 0; border: 0; background: none; color: var(--olive); font-size: 17px; font-weight: 600; text-align: start; line-height: 1.4; }
+.prompt span.u { text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 5px; }
+.prompt:hover span.u { text-decoration-style: solid; }
+.slot { margin-block-start: 8px; margin-inline-start: -30px; }
+.slot:empty { display: none; }
+.chap.composing .prompt { display: none; }
+
+/* composer */
+.composer { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 18px 22px; box-shadow: var(--shadow-print); animation: arrive .9s var(--ease) both; max-inline-size: 580px; }
+.composer h3 { margin: 0 0 4px; font: 500 26px/1.3 var(--font-serif); }
+.composer .sub { margin: 0 0 18px; color: var(--muted); font-size: 16px; }
+.field { display: block; margin-block-start: 18px; }
+.field > .l { display: block; font-weight: 600; font-size: 17px; margin-block-end: 6px; }
+.field .hint { font-weight: 400; color: var(--muted); font-size: 15px; }
+.field input[type=text], .field select, .field textarea { inline-size: 100%; min-block-size: 52px; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-size: 18px; }
+.field textarea { min-block-size: 96px; line-height: 1.6; resize: vertical; font-family: var(--font-serif); }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 3px solid var(--olive); outline-offset: 2px; }
+.field [aria-invalid="true"] { border-color: var(--amber); }
+.err { color: var(--amber); font-weight: 600; font-size: 16px; margin: 6px 0 0; }
+.pick { position: relative; display: flex; align-items: center; gap: 14px; min-block-size: 108px; padding: 18px 20px; border: 2px dashed var(--olive); border-radius: 12px; background: var(--olive-soft); color: var(--ink); cursor: pointer; transition: background .4s var(--ease); }
+.pick:hover { background: color-mix(in srgb, var(--olive-soft) 70%, var(--olive) 12%); }
+.pick:focus-within { outline: 3px solid var(--olive); outline-offset: 3px; }
+.pick input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; overflow: hidden; }
+.pick svg { inline-size: 34px; block-size: 34px; color: var(--olive); }
+.pick b { display: block; font-size: 20px; }
+.pick small { color: var(--muted); font-size: 16px; }
+.prevs { display: flex; flex-wrap: wrap; gap: 14px; margin-block-start: 14px; }
+.prevs figure { margin: 0; }
+.prevs .print { padding: 5px; box-shadow: none; }
+.prevs img { block-size: 120px; inline-size: auto; max-inline-size: 100%; }
+.prevs button { display: block; margin-block-start: 2px; min-block-size: 44px; padding-inline: 8px; border: 0; background: none; color: var(--muted); font-size: 16px; text-decoration: underline; text-underline-offset: 4px; }
+.note { display: flex; gap: 10px; background: var(--amber-soft); color: var(--ink); border-radius: 10px; padding: 12px 14px; margin-block-start: 20px; font-size: 16px; line-height: 1.5; }
+.note svg { color: var(--amber); margin-block-start: 2px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-block-start: 20px; }
+.thanks { text-align: center; padding-block: 12px 4px; }
+.thanks svg.chk { inline-size: 44px; block-size: 44px; color: var(--olive); }
+.thanks h3 { margin: 10px 0 6px; font: 500 28px/1.3 var(--font-serif); }
+.thanks p { margin: 0 auto 18px; color: var(--muted); max-inline-size: 26em; }
+.thanks .actions { justify-content: center; }
+
+.end { text-align: center; padding-block: 28px 56px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.end p { margin: 0; font: 400 20px/1.6 var(--font-serif); max-inline-size: 24em; }
+.end .slot { margin-inline-start: 0; inline-size: 100%; display: flex; justify-content: center; text-align: start; }
+.end .composer { inline-size: 100%; }
+.foot { text-align: center; color: var(--muted); font-size: 14px; padding-block-end: 24px; }
+
+@media (min-width: 900px) {
+  main { padding-inline: 72px; }
+  .top-in { padding-inline: 28px; }
+  .menu { inset-inline-start: 28px; }
+  .hero { padding-block: 72px 48px; }
+  .hero .print { inline-size: 300px; }
+  .thread::before { inset-inline-start: 50%; }
+  .chap { padding-inline-start: 0; padding-block-end: 56px; }
+  .chap .dot { inset-inline-start: calc(50% - 7px); inset-block-start: 6px; }
+  .yr, .chap .lead { text-align: center; }
+  .yr { padding-block: 0 4px; }
+  .yr h2 { justify-content: center; background: var(--bg); inline-size: max-content; max-inline-size: 100%; margin-inline: auto; padding: 22px 22px 6px; position: relative; }
+  .chap .lead { margin-inline: auto; background: var(--bg); padding: 6px 28px 18px; max-inline-size: 31em; position: relative; }
+  .hang { inline-size: calc(50% - 44px); max-inline-size: none; }
+  .hang:nth-of-type(odd) { margin-inline-end: auto; }
+  .hang:nth-of-type(even) { margin-inline-start: auto; }
+  .hang:nth-of-type(odd)::before { inset-inline-start: auto; inset-inline-end: -44px; inline-size: 44px; }
+  .hang:nth-of-type(even)::before { inset-inline-start: -44px; inline-size: 44px; }
+  .hang + .hang { margin-block-start: -40px; }
+  .prompt-row { position: relative; text-align: center; }
+  .prompt { background: var(--bg); padding-inline: 18px; }
+  .slot { margin-inline: auto; margin-block-start: 8px; inline-size: min(580px, 100%); }
+  .end .slot { inline-size: 100%; }
+  .end .composer { max-inline-size: 580px; }
+  .composer { padding: 26px 28px 28px; }
+}
+
+/* ===== admin ===== */
+#admin { max-inline-size: 680px; margin-inline: auto; padding: 36px 16px 40px; }
+#admin h1 { font: 500 34px/1.25 var(--font-serif); margin: 0 0 8px; }
+#admin .intro { font-size: 19px; color: var(--muted); margin: 0 0 26px; max-inline-size: 30em; }
+#admin h2 { font: 500 28px/1.3 var(--font-serif); margin: 52px 0 14px; }
+.count { font-size: 19px; font-weight: 600; color: var(--olive); margin: 0 0 12px; }
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 20px 24px; }
+.qcard .who { font-size: 20px; margin: 0 0 14px; }
+.qcard .who b { color: var(--olive); }
+.qcard .print { max-inline-size: 440px; }
+.qcard .print + .print { margin-block-start: 14px; }
+.qcard .words { font-size: 22px; margin-block-start: 16px; }
+.qcard fieldset { border: 0; padding: 0; margin: 26px 0 0; }
+.qcard legend { font-size: 20px; font-weight: 700; padding: 0; margin-block-end: 10px; }
+.periods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.periods button { min-block-size: 60px; border: 2px solid var(--line); background: var(--bg); border-radius: 12px; font-size: 21px; font-weight: 600; padding-inline: 12px; transition: background .3s, border-color .3s; }
+.periods button:hover { border-color: var(--olive); }
+.periods button[aria-pressed="true"] { background: var(--olive); border-color: var(--olive); color: var(--surface); }
+.periods .unsure { grid-column: 1 / -1; font-size: 19px; font-weight: 400; min-block-size: 56px; }
+.periods .unsure[aria-pressed="true"] { font-weight: 600; }
+.decide { display: grid; gap: 12px; margin-block-start: 28px; }
+.decide button { min-block-size: 68px; border-radius: 999px; font-size: 22px; font-weight: 700; border: 2px solid var(--olive); }
+.decide .yes { background: var(--olive); color: var(--surface); }
+.decide .no { background: transparent; color: var(--ink); border-color: var(--muted); font-weight: 600; }
+.decide button:hover { filter: brightness(1.07); }
+@media (min-width: 560px) { .decide { grid-template-columns: 1.4fr 1fr; } }
+.alldone { background: var(--olive-soft); border-radius: 12px; padding: 28px 22px; font: 400 22px/1.6 var(--font-serif); text-align: center; }
+.row { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-block-end: 14px; display: grid; gap: 14px; }
+.row .print { max-inline-size: 220px; padding: 6px; box-shadow: none; }
+.row .who { font-size: 19px; margin: 0; }
+.row .who b { color: var(--olive); }
+.row .periods { grid-template-columns: 1fr 1fr; }
+.row .periods button { min-block-size: 52px; font-size: 19px; }
+.row .periods .unsure { font-size: 18px; min-block-size: 52px; }
+.row .rm { min-block-size: 52px; border-radius: 999px; border: 2px solid var(--muted); background: none; font-size: 19px; font-weight: 600; }
+.row .back { min-block-size: 56px; border-radius: 999px; border: 2px solid var(--olive); background: var(--olive); color: var(--surface); font-size: 20px; font-weight: 700; }
+.smalltext { font-size: 18px; color: var(--muted); margin: 6px 0 0; }
+
+/* toast + mode switch (not part of the product) */
+.toast { position: fixed; inset-inline: 12px; inset-block-end: 62px; z-index: 60; margin-inline: auto; max-inline-size: 460px; display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 8px 10px 8px 18px; padding-inline: 18px 8px; font-size: 19px; box-shadow: var(--shadow-print); animation: arrive .5s var(--ease) both; }
+.toast button { min-block-size: 48px; padding-inline: 20px; border-radius: 999px; border: 1.5px solid var(--bg); background: transparent; color: var(--bg); font-weight: 700; font-size: 18px; }
+.modebar { position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 70; background: var(--surface); border-block-start: 1px dashed var(--muted); display: flex; align-items: center; justify-content: center; gap: 6px; padding: 5px 8px; font-size: 13px; color: var(--muted); }
+.modebar span { margin-inline-end: 6px; }
+.modebar button { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 12px; min-block-size: 32px; font-size: 13px; color: var(--ink); }
+.modebar button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-photos" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4 3 2.5 3-3 5 4.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/></symbol>
+</svg>
+
+<div id="site">
+  <header class="top" id="topbar">
+    <div class="top-in">
+      <button class="chip" id="chip" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu">
+        <span class="y" id="chipY">אופיר</span><span class="t" id="chipT"></span>
+        <svg class="i"><use href="#i-down"/></svg>
+      </button>
+      <button class="pill solid add-short" id="chipAdd" type="button"><svg class="i"><use href="#i-plus"/></svg>הוסיפו זיכרון</button>
+      <div class="menu" id="menu" hidden role="menu" aria-label="קפיצה לשנה"></div>
+    </div>
+  </header>
+  <nav class="index" id="index" aria-label="שנים"></nav>
+
+  <main>
+    <section class="hero" aria-label="אופיר">
+      <figure class="print" id="heroPrint"></figure>
+      <h1>אופיר</h1>
+      <div class="dates"><bdi dir="ltr" id="heroDates"></bdi></div>
+      <p class="bio" id="heroBio"></p>
+      <p class="begin">החיים שלו, שנה אחר שנה, על חוט אחד. אפשר להמשיך למטה.</p>
+    </section>
+    <div class="thread" id="thread"></div>
+    <section class="end" id="end">
+      <p>יש תמונה או מילה שחסרות כאן? הן מצטרפות לחוט.</p>
+      <button class="pill solid big" id="endAdd" type="button"><svg class="i"><use href="#i-plus"/></svg>הוסיפו זיכרון</button>
+      <div class="slot" id="slot-end"></div>
+    </section>
+    <p class="foot">התמונות והמילים כאן הן דוגמה בלבד.</p>
+  </main>
+</div>
+
+<section id="admin" hidden aria-label="ניהול"></section>
+
+<div id="toastHost" aria-live="polite"></div>
+<div id="park" hidden></div>
+
+<div class="modebar" role="group" aria-label="תצוגת עיצוב">
+  <span>תצוגת עיצוב</span>
+  <button type="button" data-mode="site" aria-pressed="true">אתר</button>
+  <button type="button" data-mode="contrib" aria-pressed="false">תרומה</button>
+  <button type="button" data-mode="admin" aria-pressed="false">ניהול</button>
+</div>
+
+<!-- composer, single instance moved to wherever the contributor opened it -->
+<div id="composer" class="composer" hidden role="region" aria-labelledby="cTitle"></div>
+
+<script>
+(function () {
+  var O = window.OFIR, $ = function (s, r) { return (r || document).querySelector(s); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function ico(n, c) { return '<svg class="i ' + (c || '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+
+  /* ---------- chapters ---------- */
+  var CH = O.chapters.map(function (c, i) { return { id: 'c' + i, year: c.year, title: c.title, text: c.text }; });
+  CH.push({ id: 'more', year: null, title: 'עוד זיכרונות', text: 'זיכרונות שהמשפחה עוד לא שייכה לשנה מסוימת.' });
+  function chById(id) { return CH.filter(function (c) { return c.id === id; })[0]; }
+  function chFromYear(y) { return y < 2009 ? 'c0' : y < 2014 ? 'c1' : y < 2022 ? 'c2' : 'c3'; }
+  function sureLabel(id) { return id === 'more' ? 'עוד זיכרונות' : chById(id).title; }
+
+  /* ---------- state ---------- */
+  var seq = 0, entries = [], uid = 0;
+  var msgChapter = { m1: 'c2', m2: 'c2', m3: 'c3', m4: 'c0', m5: 'c1', m6: 'c2' };
+  var usedByMsg = {};
+  function ph(p, name) { return { src: p.src, ratio: p.ratio, alt: p.caption + ' (תמונה לדוגמה)', caption: p.caption, by: name || p.by }; }
+  O.messages.forEach(function (m) {
+    var p = m.photo ? O.byId(m.photo) : null; if (p) usedByMsg[p.id] = 1;
+    var ch = msgChapter[m.id];
+    entries.push({ id: m.id, name: m.name, family: !!m.family, time: m.time, text: m.text, photos: p ? [ph(p)] : [], chapter: ch, year: p ? p.year : CH[+ch[1]].year + 0.5, status: 'approved', mine: false, t: seq++ });
+  });
+  O.approved.forEach(function (p) {
+    if (p.id === 'p01' || usedByMsg[p.id]) return;
+    entries.push({ id: p.id, name: p.by, time: '', text: '', photos: [ph(p)], chapter: chFromYear(p.year), year: p.year, status: 'approved', mine: false, t: seq++ });
+  });
+  entries.sort(function (a, b) { return a.year - b.year; });
+  var qGuess = { 'q-1': 'c2', 'q-2': 'c1', 'q-3': 'c3', 'q-4': 'more' };
+  O.queue.forEach(function (q) {
+    entries.push({ id: q.id, name: q.name, time: q.time, text: q.text, photos: q.photos.map(function (id) { var p = O.byId(id); return { src: p.src, ratio: p.ratio, alt: 'תמונה ששלח/ה ' + q.name + ' (תמונה לדוגמה)', caption: '', by: q.name }; }), chapter: qGuess[q.id], year: 0, status: 'pending', mine: false, t: seq++ });
+  });
+  function entry(id) { return entries.filter(function (e) { return e.id === id; })[0]; }
+  function visibleToPublic(e) { return e.status === 'approved' || e.mine; }
+
+  /* ---------- public render ---------- */
+  var composer = $('#composer'), park = $('#park'), openIn = null, mode = 'site', current = null;
+
+  function printHTML(p, cls) {
+    var r = p.ratio || 1.33, mw = r >= 1.3 ? '' : r >= 0.95 ? 'max-inline-size:390px' : 'max-inline-size:290px';
+    return '<figure class="print ' + (cls || '') + '" style="' + mw + '"><img src="' + p.src + '" alt="' + esc(p.alt) + '" loading="lazy">' +
+      (p.caption ? '<figcaption dir="auto">' + esc(p.caption) + '</figcaption>' : '') + '</figure>';
+  }
+  function entryHTML(e, isNew) {
+    var waiting = e.mine && e.status !== 'approved';
+    var h = '<article class="hang' + (waiting ? ' waiting' : '') + (isNew ? ' arrive' : '') + '" data-id="' + e.id + '">';
+    e.photos.forEach(function (p) { h += printHTML(p); });
+    if (e.photos.length) {
+      var by = e.photos[0].by;
+      if (!e.text) h += '<span class="credit">צולם ע״י <span dir="auto">' + esc(e.mine ? e.name : by) + '</span></span>';
+    }
+    if (e.text) h += '<blockquote class="words' + (e.photos.length ? '' : ' only') + '" dir="auto">' + esc(e.text) + '</blockquote>';
+    if (e.text || !e.photos.length) {
+      h += '<p class="by' + (e.family ? ' fam' : '') + '"><b dir="auto">' + esc(e.name) + '</b>' + (e.time ? ' · ' + esc(e.time) : '') + '</p>';
+    }
+    if (e.text && e.photos.length) h += '<span class="credit">צולם ע״י <span dir="auto">' + esc(e.photos[0].by) + '</span></span>';
+    if (waiting) h += '<p class="wait-note">' + ico('clock') + '<span>' + O.copy.waiting + '</span></p>';
+    return h + '</article>';
+  }
+  var newestId = null;
+  function renderThread() {
+    park.appendChild(composer);
+    var out = '';
+    CH.forEach(function (c) {
+      var list = entries.filter(function (e) { return e.chapter === c.id && visibleToPublic(e); });
+      out += '<section class="chap" id="ch-' + c.id + '" data-ch="' + c.id + '"><span class="dot"></span>';
+      out += '<div class="yr"><h2>' + (c.year ? '<bdi class="num">' + c.year + '</bdi>' : '') + '<span class="ttl">' + c.title + '</span></h2></div>';
+      out += '<p class="lead">' + c.text + '</p>';
+      list.forEach(function (e) { out += entryHTML(e, e.id === newestId); });
+      out += '<div class="prompt-row"><button class="prompt" type="button" data-open="' + c.id + '">' + ico('plus') + '<span class="u">' +
+        (c.year ? 'יש לכם תמונה מ־<bdi>' + c.year + '</bdi>? הוסיפו אותה כאן' : 'יש לכם עוד תמונה או מילה? הוסיפו אותן כאן') + '</span></button></div>';
+      out += '<div class="slot" id="slot-' + c.id + '"></div></section>';
+    });
+    $('#thread').innerHTML = out;
+    newestId = null;
+    if (openIn) mount(openIn);
+    observeReveal();
+    spy();
+  }
+  function mount(chId) {
+    var slot = chId === 'end' ? $('#slot-end') : $('#slot-' + chId);
+    if (!slot) return;
+    slot.appendChild(composer); composer.hidden = false;
+    document.querySelectorAll('.chap').forEach(function (s) { s.classList.toggle('composing', s.dataset.ch === chId); });
+  }
+
+  var io;
+  function observeReveal() {
+    if (io) io.disconnect();
+    if (reduce || !('IntersectionObserver' in window)) return;
+    io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }); }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.hang:not(.arrive)').forEach(function (el) {
+      if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); io.observe(el); }
+    });
+  }
+
+  /* ---------- hero ---------- */
+  (function () {
+    var p = O.byId('p01');
+    $('#heroPrint').innerHTML = '<img src="' + p.src + '" alt="אופיר (תמונה לדוגמה)"><figcaption>אופיר</figcaption>';
+    $('#heroDates').textContent = O.person.dates;
+    $('#heroBio').textContent = O.person.bio;
+  })();
+
+  /* ---------- index, chip, spy ---------- */
+  var menu = $('#menu'), chip = $('#chip'), index = $('#index');
+  function buildNav() {
+    var m = '', ix = '';
+    CH.forEach(function (c) {
+      var y = c.year ? '<bdi>' + c.year + '</bdi>' : '…';
+      m += '<button type="button" role="menuitem" data-go="' + c.id + '" aria-current="false"><span class="y">' + y + '</span><span>' + c.title + '</span></button>';
+      ix += '<button type="button" data-go="' + c.id + '" aria-current="false" aria-label="' + c.title + '">' + y + '</button>';
+    });
+    menu.innerHTML = m; index.innerHTML = ix;
+  }
+  function go(id) { var el = $('#ch-' + id); if (el) el.scrollIntoView({ block: 'start' }); closeMenu(); }
+  function closeMenu() { menu.hidden = true; chip.setAttribute('aria-expanded', 'false'); }
+  chip.addEventListener('click', function () { var o = menu.hidden; menu.hidden = !o; chip.setAttribute('aria-expanded', String(o)); });
+  document.addEventListener('click', function (e) { if (!menu.hidden && !e.target.closest('#menu') && !e.target.closest('#chip')) closeMenu(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+
+  var ticking = false;
+  function spy() {
+    if (mode === 'admin') return;
+    var cur = null, line = innerHeight * 0.38;
+    document.querySelectorAll('.chap').forEach(function (s) { if (s.getBoundingClientRect().top <= line) cur = s.dataset.ch; });
+    if (cur === current && ticking !== 'force') return;
+    current = cur;
+    document.querySelectorAll('.chap').forEach(function (s) { s.classList.toggle('current', s.dataset.ch === cur); });
+    var c = cur ? chById(cur) : null;
+    $('#chipY').innerHTML = c ? (c.year ? '<bdi>' + c.year + '</bdi>' : '…') : 'אופיר';
+    $('#chipT').textContent = c ? c.title : 'תחילת החוט';
+    document.querySelectorAll('[data-go]').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.go === cur)); });
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; spy(); }); } }, { passive: true });
+  addEventListener('resize', spy);
+
+  /* ---------- composer ---------- */
+  var files = [], name = '', lastSent = null;
+  function composerForm(chId) {
+    var sel = chId === 'end' ? 'more' : chId;
+    var opts = CH.map(function (c) { return '<option value="' + c.id + '"' + (c.id === sel ? ' selected' : '') + '>' + (c.year ? c.year + ' · ' + c.title : 'לא בטוח, תנו למשפחה להחליט') + '</option>'; }).join('');
+    composer.innerHTML =
+      '<h3 id="cTitle" class="serif">הוסיפו זיכרון</h3>' +
+      '<p class="sub">תמונה, מילים, או שניהם. כמה שנוח לכם.</p>' +
+      '<label class="pick" for="cFile">' + ico('photos') + '<span><b>לבחור תמונות</b><small>אפשר כמה בבת אחת, ישר מהטלפון</small></span>' +
+      '<input id="cFile" type="file" accept="image/*" multiple></label>' +
+      '<div class="prevs" id="cPrevs" aria-live="polite"></div>' +
+      '<label class="field"><span class="l">לאיזו תקופה זה שייך?</span><select id="cPeriod">' + opts + '</select></label>' +
+      '<label class="field"><span class="l">מה שמכם? <span class="hint">יופיע ליד הזיכרון</span></span><input id="cName" type="text" autocomplete="name" dir="auto" required aria-describedby="cNameErr" value="' + esc(name) + '"><p class="err" id="cNameErr" role="alert" hidden>נשמח לדעת ממי זה. כתבו את שמכם.</p></label>' +
+      '<label class="field"><span class="l">מילים על התמונה <span class="hint">לא חובה</span></span><textarea id="cText" dir="auto" placeholder="מה היה שם? מה אתם זוכרים?"></textarea></label>' +
+      '<p class="err" id="cEmptyErr" role="alert" hidden>בחרו תמונה, או כתבו כמה מילים.</p>' +
+      '<div class="note">' + ico('info') + '<span>המשפחה קוראת ומאשרת כל זיכרון לפני שהוא מופיע באתר.</span></div>' +
+      '<div class="actions"><button class="pill solid big" type="button" id="cSend">' + O.copy.send + '</button><button class="pill quiet" type="button" id="cCancel">ביטול</button></div>';
+    renderPrevs();
+  }
+  function renderPrevs() {
+    var box = $('#cPrevs'); if (!box) return;
+    box.innerHTML = files.map(function (f, i) {
+      return '<figure><div class="print"><img src="' + f.url + '" alt="תמונה שבחרתם"></div><button type="button" data-rm="' + i + '">להסיר</button></figure>';
+    }).join('');
+  }
+  function openComposer(chId, noScroll) {
+    files = []; openIn = chId; composerForm(chId); mount(chId);
+    if (!noScroll) setTimeout(function () { composer.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }); }, 30);
+  }
+  function closeComposer() {
+    openIn = null; composer.hidden = true; park.appendChild(composer);
+    document.querySelectorAll('.chap').forEach(function (s) { s.classList.remove('composing'); });
+    files.forEach(function (f) { }); files = [];
+  }
+  composer.addEventListener('change', function (e) {
+    if (e.target.id !== 'cFile') return;
+    Array.prototype.forEach.call(e.target.files, function (f) { files.push({ url: URL.createObjectURL(f) }); });
+    e.target.value = ''; renderPrevs(); $('#cEmptyErr').hidden = true;
+  });
+  composer.addEventListener('click', function (e) {
+    var rm = e.target.closest('[data-rm]');
+    if (rm) { files.splice(+rm.dataset.rm, 1); renderPrevs(); return; }
+    if (e.target.closest('#cCancel') || e.target.closest('#cClose')) { closeComposer(); if (mode === 'contrib') setMode('site'); return; }
+    if (e.target.closest('#cMore')) { openComposer(openIn, true); $('#cFile').focus(); return; }
+    if (e.target.closest('#cSee')) { var el = $('[data-id="' + lastSent + '"]'); if (el) el.scrollIntoView({ block: 'center' }); return; }
+    if (e.target.closest('#cSend')) send();
+  });
+  composer.addEventListener('input', function (e) { if (e.target.id === 'cName') { name = e.target.value; if (name.trim()) { e.target.removeAttribute('aria-invalid'); $('#cNameErr').hidden = true; } } });
+  function send() {
+    var n = $('#cName'), t = $('#cText').value.trim(), nm = n.value.trim();
+    name = nm;
+    if (!nm) { n.setAttribute('aria-invalid', 'true'); $('#cNameErr').hidden = false; n.focus(); return; }
+    if (!files.length && !t) { $('#cEmptyErr').hidden = false; $('#cFile').focus(); return; }
+    var ch = $('#cPeriod').value, id = 'u' + (++uid);
+    entries.unshift({ id: id, name: nm, mine: true, status: 'pending', time: 'הרגע', text: t, chapter: ch, year: 9999, t: seq++,
+      photos: files.map(function (f) { return { src: f.url, alt: 'התמונה ששיתפתם, ממתינה לאישור', caption: '', by: nm, ratio: 0 }; }) });
+    newestId = id; lastSent = id; files = [];
+    var where = openIn;
+    renderThread(); // re-mounts composer
+    composer.innerHTML = '<div class="thanks">' + ico('check', 'chk') + '<h3 class="serif" id="cTitle">' + O.copy.thanks + '</h3>' +
+      '<p>הזיכרון שלכם מחכה לאישור המשפחה. בינתיים רק אתם רואים אותו, בקו מקווקו, במקום שבחרתם.</p>' +
+      '<div class="actions"><button class="pill solid" type="button" id="cMore">להוסיף עוד</button><button class="pill" type="button" id="cSee">לראות אותו על החוט</button><button class="pill quiet" type="button" id="cClose">סגירה</button></div></div>';
+    openIn = where; mount(where);
+    if (renderAdminIfNeeded) renderAdminIfNeeded();
+    var el = $('[data-id="' + id + '"]'); if (el) setTimeout(function () { el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }); }, 80);
+    setTimeout(function () { var h = $('#cTitle'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } }, 120);
+  }
+  document.addEventListener('click', function (e) {
+    var o = e.target.closest('[data-open]'); if (o) openComposer(o.dataset.open);
+  });
+  $('#endAdd').addEventListener('click', function () { openComposer('end'); });
+  $('#chipAdd').addEventListener('click', function () { var c = current || 'more'; openComposer(c === null ? 'more' : c); });
+
+  /* ---------- toast ---------- */
+  var toastT;
+  function toast(msg, undo) {
+    clearTimeout(toastT);
+    var host = $('#toastHost');
+    host.innerHTML = '<div class="toast" role="status"><span>' + esc(msg) + '</span><button type="button" id="undoBtn">ביטול</button></div>';
+    $('#undoBtn').onclick = function () { clearTimeout(toastT); host.innerHTML = ''; undo(); };
+    toastT = setTimeout(function () { host.innerHTML = ''; }, 5000);
+  }
+
+  /* ---------- admin ---------- */
+  var admin = $('#admin'), renderAdminIfNeeded = null;
+  function periodButtons(e, extraAttr) {
+    var h = '<div class="periods" role="group" aria-label="לאיזו תקופה זה שייך">';
+    CH.slice(0, 4).forEach(function (c) { h += '<button type="button" data-set="' + e.id + '" data-to="' + c.id + '" aria-pressed="' + (e.chapter === c.id) + '">' + c.title + '</button>'; });
+    h += '<button type="button" class="unsure" data-set="' + e.id + '" data-to="more" aria-pressed="' + (e.chapter === 'more') + '">לא בטוח, תנו למשפחה להחליט</button></div>';
+    return h;
+  }
+  function adminPrints(e) { return e.photos.map(function (p) { return printHTML({ src: p.src, ratio: p.ratio, alt: p.alt, caption: '' }); }).join(''); }
+  function renderAdmin() {
+    var q = entries.filter(function (e) { return e.status === 'pending'; }).sort(function (a, b) { return a.t - b.t; });
+    var ap = entries.filter(function (e) { return e.status === 'approved' && e.photos.length; });
+    var hid = entries.filter(function (e) { return e.status === 'hidden'; });
+    var h = '<h1>זיכרונות שמחכים להחלטה</h1><p class="intro">זיכרון אחד בכל פעם. בחרו לאיזו תקופה הוא שייך, ואז החליטו אם להציג אותו.</p>';
+    if (q.length) {
+      var e = q[0];
+      h += '<p class="count">זיכרון 1 מתוך ' + q.length + '</p><article class="qcard" data-id="' + e.id + '">';
+      h += '<p class="who">מאת <b dir="auto">' + esc(e.name) + '</b> · ' + esc(e.time) + '</p>' + adminPrints(e);
+      if (e.text) h += '<blockquote class="words" dir="auto">' + esc(e.text) + '</blockquote>';
+      h += '<fieldset><legend>לאיזו תקופה זה שייך?</legend>' + periodButtons(e) + '</fieldset>';
+      h += '<div class="decide"><button class="yes" type="button" data-decide="show" data-id="' + e.id + '">' + O.copy.show + '</button><button class="no" type="button" data-decide="hide" data-id="' + e.id + '">' + O.copy.hide + '</button></div></article>';
+    } else {
+      h += '<p class="alldone">אין עכשיו זיכרונות שמחכים. תודה על העזרה.</p>';
+    }
+    h += '<h2>כבר באתר</h2><p class="smalltext" style="margin-block-end:16px">אפשר להעביר תמונה לתקופה אחרת, או להסיר אותה מהאתר.</p>';
+    ap.forEach(function (e) {
+      h += '<div class="row" data-id="' + e.id + '"><p class="who"><b dir="auto">' + esc(e.name) + '</b>' + (e.photos.length > 1 ? ' · ' + e.photos.length + ' תמונות' : '') + '</p>' + adminPrints(e) + periodButtons(e) +
+        '<button class="rm" type="button" data-decide="remove" data-id="' + e.id + '">להסיר מהאתר</button></div>';
+    });
+    if (hid.length) {
+      h += '<h2>לא מוצגים באתר</h2>';
+      hid.forEach(function (e) {
+        h += '<div class="row" data-id="' + e.id + '"><p class="who"><b dir="auto">' + esc(e.name) + '</b></p>' + adminPrints(e) + (e.text ? '<blockquote class="words" dir="auto" style="margin:0">' + esc(e.text) + '</blockquote>' : '') +
+          '<button class="back" type="button" data-decide="show" data-id="' + e.id + '">' + O.copy.show + '</button></div>';
+      });
+    }
+    admin.innerHTML = h;
+  }
+  renderAdminIfNeeded = function () { if (mode === 'admin') renderAdmin(); };
+  admin.addEventListener('click', function (ev) {
+    var s = ev.target.closest('[data-set]');
+    if (s) {
+      var e = entry(s.dataset.set), prev = e.chapter, to = s.dataset.to;
+      if (prev === to) return;
+      e.chapter = to; renderAdmin(); renderThread();
+      if (e.status === 'approved') toast('הועבר: ' + sureLabel(to), function () { e.chapter = prev; renderAdmin(); renderThread(); });
+      return;
+    }
+    var d = ev.target.closest('[data-decide]');
+    if (d) {
+      var en = entry(d.dataset.id), prevS = en.status, k = d.dataset.decide;
+      en.status = k === 'show' ? 'approved' : 'hidden';
+      renderAdmin(); renderThread();
+      toast(k === 'show' ? 'הוצג באתר' : k === 'hide' ? 'לא יוצג באתר' : 'הוסר מהאתר', function () { en.status = prevS; renderAdmin(); renderThread(); });
+    }
+  });
+
+  /* ---------- mode ---------- */
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.modebar button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); });
+    var isAdmin = m === 'admin';
+    $('#site').hidden = isAdmin; admin.hidden = !isAdmin; $('#index').hidden = isAdmin;
+    if (isAdmin) { renderAdmin(); scrollTo(0, 0); }
+    else {
+      renderThread(); current = undefined; spy();
+      if (m === 'contrib') { openComposer('end'); }
+    }
+  }
+  document.querySelectorAll('.modebar button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+
+  buildNav(); renderThread();
+  if (location.hash === '#admin') setMode('admin'); else if (location.hash === '#contrib') setMode('contrib');
+})();
+</script>
+</body>
+</html>
