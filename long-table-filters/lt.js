@@ -114,3 +114,16 @@
     return n === total ? 'כל ' + total + ' הזיכרונות' : n + ' מתוך ' + total + ' זיכרונות';
   };
 })();
+
+/* the strip toggle and the one-line explanation on every legend */
+(function () {
+  function init() {
+    var p = document.querySelector('.proof');
+    if (p) {
+      p.insertAdjacentHTML('beforeend', '<label class="anno-toggle"><input type="checkbox" checked> הצגת הערות עיצוב</label>');
+      p.querySelector('input').addEventListener('change', function () { document.documentElement.classList.toggle('hide-anno', !this.checked); });
+    }
+    document.querySelectorAll('.legend').forEach(function (l) { l.insertAdjacentHTML('afterbegin', '<strong class="anno-note">הערות עיצוב להבנת ההצעה בלבד, לא חלק מהאתר:</strong>'); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

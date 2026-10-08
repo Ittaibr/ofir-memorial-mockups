@@ -20,7 +20,7 @@ body { padding-block-end: 96px; }
 /* banner and the family's opening */
 .banner { position: relative; }
 .banner img { inline-size: 100%; block-size: clamp(190px, 36vw, 400px); object-fit: cover; }
-.banner .src { position: absolute; inset-block-end: 12px; inset-inline-start: var(--gutter); background: var(--surface); }
+.banner .src { position: absolute; inset-block-end: 12px; inset-inline-start: var(--gutter);
 .intro { display: grid; gap: 18px; padding-block: 0 36px; }
 .intro .who { display: flex; gap: 16px; align-items: flex-end; margin-block-start: -56px; position: relative; }
 .intro .print { inline-size: 124px; flex: none; }
@@ -92,12 +92,11 @@ body { padding-block-end: 96px; }
 .chap-head h2 { margin: 0; font: 500 clamp(34px, 8vw, 48px)/1.1 var(--font-serif); }
 .chap-head h2 bdi { font: 400 18px var(--font-ui); color: var(--muted); margin-inline-start: 12px; }
 .chap-head p { margin: 0; font: 400 21px/1.7 var(--font-serif); max-inline-size: 36ch; }
-.chap-head .src.own { background: var(--surface); }
 .grid { columns: 1; column-gap: 24px; }
 .grid > * { break-inside: avoid; margin-block-end: 28px; }
 @media (min-width: 640px) { .grid { columns: 2; } }
 .note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 14px; }
-.note.fam { background: var(--mark-soft); border-color: transparent; }
+.note.fam { border-color: var(--accent); }
 .note .quote { font-size: 20px; }
 .tags { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 .stream .print .tags { margin: 0; }
