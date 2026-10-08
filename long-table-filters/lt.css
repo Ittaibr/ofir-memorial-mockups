@@ -1,0 +1,73 @@
+/* Shared pieces of the three filter mockups. Each variant sets its own palette tokens on :root
+   (--bg --surface --ink --muted --line --accent --accent-soft --on-accent --mark --mark-soft).
+   Fonts, easing and the print shadow come from ../shared/tokens.css. */
+[hidden] { display: none !important; }
+body { overflow-x: hidden; }
+.vh { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); opacity: 0; }
+svg.ic { inline-size: 20px; block-size: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.wrap { max-inline-size: 1180px; margin-inline: auto; padding-inline: var(--gutter); }
+::selection { background: var(--accent-soft); color: var(--ink); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+html { scroll-behavior: smooth; }
+* { scrollbar-color: var(--line) transparent; }
+
+/* mockup-only strip: says it is a design proposal, links back to the set */
+.proof { background: var(--ink); color: var(--bg); font-size: 15px; padding: 10px var(--gutter); display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; justify-content: space-between; }
+.proof a { color: inherit; font-weight: 600; text-underline-offset: 3px; min-block-size: 24px; }
+
+/* provenance: the family's hand, always the same words and icon */
+.src { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; line-height: 1.3; padding: 2px 10px 2px 8px; border-radius: 999px; vertical-align: middle; color: var(--ink); }
+.src .ic { inline-size: 16px; block-size: 16px; }
+.src.own { background: var(--mark-soft); }
+.src.own .ic { color: var(--mark); }
+.src.pick { border: 1px solid var(--mark); }
+.src.pick .ic { color: var(--mark); }
+.by { color: var(--muted); font-size: 16px; }
+.by b { color: var(--accent); font-weight: 700; }
+.src + .by { margin-inline-start: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 16px; color: var(--muted); margin: 0; }
+.legend > span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* prints (photos) and words */
+.print { margin: 0; background: var(--surface); padding: 8px 8px 0; border: 1px solid var(--line); box-shadow: var(--shadow-print); }
+.print img { inline-size: 100%; block-size: auto; }
+.print figcaption { padding: 9px 2px 11px; display: grid; gap: 4px; }
+.print .cap { font: 400 17px/1.45 var(--font-serif); }
+.print .cr { font-size: 15px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 0; align-items: center; }
+.quote { margin: 0; font: 400 21px/1.7 var(--font-serif); max-inline-size: 38ch; text-wrap: pretty; }
+.quote-by { margin: 10px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+.family-text { background: var(--mark-soft); border-radius: 12px; padding: 18px 20px; }
+
+/* controls */
+.pill { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-block-size: 52px; padding-inline: 26px; border-radius: 999px; border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 18px; text-decoration: none; transition: transform .3s var(--ease), background .3s var(--ease); }
+.pill:hover { transform: translateY(-1px); }
+.pill.quiet { background: transparent; color: var(--ink); }
+.textbtn { border: 0; background: transparent; min-block-size: 48px; padding-inline: 12px; color: var(--accent); font-weight: 700; font-size: 17px; text-decoration: underline; text-underline-offset: 4px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; min-block-size: 48px; padding-inline: 18px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font-size: 17px; font-weight: 600; white-space: nowrap; transition: background .2s var(--ease), border-color .2s var(--ease); }
+.chip:hover { border-color: var(--accent); }
+.chip .n { color: var(--muted); font-weight: 400; font-size: 15px; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[aria-pressed="true"] .n { color: inherit; opacity: .85; }
+.chip[aria-pressed="true"]::before { content: ""; inline-size: 14px; block-size: 14px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat; }
+.chip.zero:not([aria-pressed="true"]) { opacity: .55; }
+.chip.x .ic { inline-size: 16px; block-size: 16px; }
+
+/* bottom sheet on phones; variants may re-anchor it on large screens */
+.scrim { position: fixed; inset: 0; background: rgba(20, 22, 18, .42); z-index: 70; }
+.sheet { position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 71; max-block-size: 88dvh; overflow: auto; background: var(--surface); border-radius: 18px 18px 0 0; padding: 18px var(--gutter) calc(20px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px -10px rgba(20, 22, 18, .4); overscroll-behavior: contain; }
+.sheet h2 { margin: 0 0 4px; font: 500 24px/1.3 var(--font-serif); }
+.sheet .sub { margin: 0 0 16px; color: var(--muted); font-size: 16px; }
+.sheet .opts { display: flex; flex-wrap: wrap; gap: 10px; }
+.sheet .foot { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-block-start: 22px; }
+.sheet .foot .pill { flex: 1; }
+.grab { display: block; inline-size: 44px; block-size: 5px; background: var(--line); border-radius: 9px; margin: -6px auto 14px; }
+
+/* empty state: gentle, with a way out */
+.empty { background: var(--accent-soft); border-radius: 14px; padding: 28px 24px; display: grid; gap: 10px; justify-items: start; max-inline-size: 560px; }
+.empty strong { font: 500 24px/1.3 var(--font-serif); }
+.empty p { margin: 0; color: var(--ink); }
+.empty .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-block-start: 6px; }
+
+.footnote { text-align: center; color: var(--muted); font-size: 15px; padding: 16px var(--gutter) 40px; }
+.sr-live { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

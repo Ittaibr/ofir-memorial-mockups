@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>הצעה א · מסננים על השולחן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="lt.css">
+<style>
+/* Palette A: limestone, olive leaf, evening light (DESIGN.md as written) */
+:root { --accent: var(--olive); --accent-soft: var(--olive-soft); --on-accent: #fff; --mark: var(--amber); --mark-soft: var(--amber-soft); --bar-h: 64px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --on-accent: #161915; } }
+body { padding-block-end: 96px; }
+.scrim { z-index: 39; }
+
+/* hero: his face first, the family's words beside it */
+.hero { padding-block: 28px 40px; display: grid; gap: 26px; }
+.hero .print { max-inline-size: 340px; }
+.hero h1 { font: 500 clamp(56px, 17vw, 96px)/1 var(--font-serif); margin: 0 0 12px; }
+.hero .dates { color: var(--muted); font-size: 18px; }
+.hero .bio { margin: 22px 0 14px; font: 400 22px/1.65 var(--font-serif); max-inline-size: 30ch; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block-start: 22px; }
+@media (min-width: 900px) {
+  .hero { grid-template-columns: 5fr 7fr; gap: 72px; align-items: end; padding-block: 56px 56px; }
+  .hero .print { max-inline-size: 440px; }
+  .hero .bio { font-size: 25px; }
+}
+
+/* three ways in: the closeness tiles (from the inspiration's quick-access tiles) */
+.doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-block-end: 36px; }
+.door { position: relative; display: grid; grid-template-rows: 1fr auto; padding: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; overflow: hidden; text-align: start; color: var(--ink); min-block-size: 168px; transition: border-color .3s var(--ease), transform .4s var(--ease); }
+.door:hover { transform: translateY(-2px); border-color: var(--accent); }
+.door img { inline-size: 100%; block-size: 100%; object-fit: cover; min-block-size: 100px; }
+.door span { display: grid; padding: 10px 12px 12px; }
+.door b { font: 500 20px/1.2 var(--font-serif); }
+.door small { color: var(--muted); font-size: 15px; }
+.door[aria-pressed="true"] { border: 2px solid var(--accent); }
+.door[aria-pressed="true"] span { background: var(--accent); color: var(--on-accent); }
+.door[aria-pressed="true"] small { color: inherit; }
+@media (min-width: 700px) { .door { min-block-size: 240px; } .door b { font-size: 26px; } .doors { gap: 20px; } }
+
+/* sticky filter bar */
+.bar { position: sticky; inset-block-start: 0; z-index: 40; background: var(--bg); border-block: 1px solid var(--line); }
+.bar .wrap { padding-block: 10px; display: grid; gap: 8px; }
+.bar .row1 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; }
+.fgroup { position: relative; min-inline-size: 0; }
+.fbtn { inline-size: 100%; min-block-size: 52px; display: inline-flex; align-items: center; justify-content: space-between; gap: 6px; padding-inline: 12px 8px; line-height: 1.15; text-align: start; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font-size: 17px; font-weight: 700; transition: border-color .2s var(--ease); }
+.fbtn:hover { border-color: var(--accent); }
+.fbtn .cnt { display: inline-grid; place-items: center; min-inline-size: 24px; block-size: 24px; border-radius: 99px; background: var(--accent); color: var(--on-accent); font-size: 14px; padding-inline: 6px; }
+.fbtn .cnt:empty { display: none; }
+.fbtn .ic { transition: transform .3s var(--ease); margin-inline-start: auto; }
+.fbtn[aria-expanded="true"] .ic { transform: rotate(180deg); }
+.fbtn[aria-expanded="true"], .fbtn.on { border-color: var(--accent); }
+.row2 { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-block-end: 2px; }
+.row2::-webkit-scrollbar { display: none; }
+.row2 .state { color: var(--muted); font-size: 16px; white-space: nowrap; margin-inline-end: auto; }
+.row2 .chip { min-block-size: 44px; padding-inline: 14px; font-size: 16px; background: var(--accent-soft); border-color: transparent; }
+.row2 .chip::before { display: none; }
+@media (min-width: 900px) {
+  .bar .wrap { grid-template-columns: auto 1fr; align-items: center; gap: 18px; }
+  .bar .row1 { grid-template-columns: repeat(3, 190px); }
+  .fbtn { min-block-size: 48px; }
+  .scrim { background: transparent; }
+}
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  .sheet { position: absolute; inset-inline: 0 auto; inset-block: calc(100% + 8px) auto; inline-size: 380px; max-block-size: 70vh; border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 16px 40px -12px rgba(20, 22, 18, .35); padding: 20px; }
+  .grab { display: none; }
+}
+
+/* the table (stagger, as in the long-table mockup) */
+.resultline { padding-block: 22px 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; justify-content: space-between; }
+.resultline p { margin: 0; }
+.table { display: grid; grid-template-columns: 1fr; gap: 56px 0; padding-block: 28px 24px; min-block-size: 40vh; }
+.table.fade { animation: settle .45s var(--ease); }
+@keyframes settle { from { opacity: .3; } to { opacity: 1; } }
+.entry { min-inline-size: 0; }
+.entry.a:not(.chapter) { margin-inline-end: 10%; }
+.entry.b:not(.chapter) { margin-inline-start: 10%; }
+.entry .inner { display: grid; gap: 18px; }
+.entry .tags { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+.chapter h3 { margin: 12px 0 6px; font: 500 30px/1.2 var(--font-serif); }
+.chapter h3 bdi { font: 400 18px var(--font-ui); color: var(--muted); margin-inline-start: 10px; }
+.chapter p { margin: 0; font: 400 21px/1.7 var(--font-serif); max-inline-size: 34ch; }
+@media (min-width: 900px) {
+  .table { grid-template-columns: repeat(12, 1fr); column-gap: 24px; row-gap: 96px; padding-block-start: 48px; }
+  .entry { grid-column: 1 / -1; margin: 0 !important; }
+  .entry.prints.a { grid-column: 1 / span 8; }
+  .entry.prints.b { grid-column: 5 / span 8; }
+  .entry.prints.has-text.a { grid-column: 1 / span 11; }
+  .entry.prints.has-text.b { grid-column: 2 / span 11; }
+  .entry.has-text .inner { grid-template-columns: 1.3fr 1fr; align-items: end; gap: 40px; }
+  .entry.words.a { grid-column: 2 / span 5; }
+  .entry.words.b { grid-column: 7 / span 5; }
+  .entry.chapter { grid-column: 3 / span 8; }
+  .quote { font-size: 23px; }
+}
+.dock { position: fixed; inset-inline: 0; inset-block-end: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: center; z-index: 30; pointer-events: none; }
+.dock .pill { pointer-events: auto; box-shadow: 0 8px 24px -6px rgba(34, 38, 31, .35); }
+@media (min-width: 900px) { .dock { display: none; } }
+</style>
+</head>
+<body>
+<div class="proof"><span>הצעה א מתוך שלוש · כל התמונות, השמות והטקסטים כאן לדוגמה</span><a href="index.html">לכל ההצעות</a></div>
+
+<main>
+  <div class="wrap">
+    <header class="hero">
+      <figure class="print" id="portrait"></figure>
+      <div>
+        <h1>אופיר</h1>
+        <div class="dates"><bdi dir="ltr">19XX – 20XX</bdi></div>
+        <p class="bio">אח, חבר, בן אדם שידע להקשיב. מי שהיה איתו בחדר, הרגיש שהוא היחיד שם.</p>
+        <p class="legend"><span class="src own" id="bioSrc"></span><span>המשפחה כתבה את הפתיח, בחרה את התמונות הראשיות ותיקנה לכל פריט את התגיות.</span></p>
+        <div class="actions"><a class="pill" href="#table">לשתף זיכרון</a><a class="pill quiet" href="#table">להשאיר מילה</a></div>
+      </div>
+    </header>
+    <section class="doors" id="doors" aria-label="להיכנס לפי קרבה"></section>
+  </div>
+
+  <div class="bar" id="bar" role="region" aria-label="סינון השולחן">
+    <div class="wrap">
+      <div class="row1" id="row1"></div>
+      <div class="row2" id="row2"></div>
+    </div>
+  </div>
+
+  <div class="wrap" id="tableTop">
+    <div class="resultline">
+      <p id="count" aria-live="polite"></p>
+      <p class="legend" aria-label="מקרא"><span><span class="src own"></span></span><span><span class="src pick"></span></span></p>
+    </div>
+    <section class="table" id="table" aria-label="השולחן הארוך"></section>
+  </div>
+  <p class="footnote">התמונות והמילים כאן לדוגמה. התגיות (תקופה, מקום עבודה, קרבה) נקבעות על ידי המשפחה בעת האישור.</p>
+  <div class="dock"><a class="pill" href="#table">לשתף זיכרון</a></div>
+</main>
+<div class="scrim" id="scrim" hidden></div>
+
+<script src="../shared/photos.js"></script>
+<script src="lt.js"></script>
+<script>
+(function () {
+  var qs = function (s, r) { return (r || document).querySelector(s); };
+  var F = LT.facets, order = ['period', 'workplace', 'relation'], open = null;
+  var total = LT.content().length;
+
+  /* hero provenance + legend text */
+  var ph = window.OFIR.byId('p01');
+  qs('#portrait').innerHTML = '<img src="' + ph.src + '" alt="אופיר, תמונה לדוגמה" width="600" height="750"><figcaption><span class="cr">' + LT.src({ own: 'own', type: 'photo', by: 'המשפחה' }) + '</span></figcaption>';
+  qs('#bioSrc').innerHTML = LT.icon('leaf') + 'נכתב ע״י המשפחה';
+  var lg = document.querySelectorAll('.resultline .legend .src');
+  lg[0].innerHTML = LT.icon('leaf') + 'מהמשפחה: נכתב או סופק על ידה';
+  lg[1].innerHTML = LT.icon('pick') + 'נבחר ע״י המשפחה: ממי ששיתף';
+
+  /* closeness tiles */
+  var tilePhoto = { family: 'p10', friends: 'p05', hobbies: 'p08' };
+  qs('#doors').innerHTML = F.relation.opts.map(function (o) {
+    return '<button type="button" class="door" data-rel="' + o.id + '" aria-pressed="false"><img src="' + window.OFIR.byId(tilePhoto[o.id]).src + '" alt="" loading="lazy"><span><b>' + o.label + '</b><small></small></span></button>';
+  }).join('');
+  qs('#doors').addEventListener('click', function (e) {
+    var b = e.target.closest('.door'); if (!b) return;
+    var on = b.getAttribute('aria-pressed') === 'true';
+    LT.only('relation', on ? null : b.dataset.rel);
+    if (!on) qs('#bar').scrollIntoView({ block: 'start' });
+  });
+
+  /* filter buttons + sheets */
+  qs('#row1').innerHTML = order.map(function (f) {
+    return '<div class="fgroup" data-f="' + f + '"><button type="button" class="fbtn" aria-expanded="false" aria-controls="sh-' + f + '"><span>' + F[f].label + '</span><span class="cnt"></span>' + LT.icon('chev') + '</button>' +
+      '<div class="sheet" id="sh-' + f + '" role="group" aria-label="' + F[f].label + '" hidden><span class="grab"></span><h2>' + F[f].label + '</h2><p class="sub">' + (f === 'workplace' ? 'שמות לדוגמה. המשפחה תזין את האמיתיים. ' : '') + 'אפשר לבחור כמה.</p><div class="opts">' +
+      F[f].opts.map(function (o) { return '<button type="button" class="chip" data-id="' + o.id + '" aria-pressed="false">' + o.label + ' <span class="n"></span></button>'; }).join('') +
+      '</div><div class="foot"><button type="button" class="textbtn clear">ניקוי</button><button type="button" class="pill done">הצגה</button></div></div></div>';
+  }).join('');
+
+  function setOpen(f) {
+    open = f;
+    document.querySelectorAll('.fgroup').forEach(function (g) {
+      var on = g.dataset.f === f;
+      g.querySelector('.fbtn').setAttribute('aria-expanded', on);
+      g.querySelector('.sheet').hidden = !on;
+    });
+    qs('#scrim').hidden = !f;
+    if (f) { var s = qs('#sh-' + f); setTimeout(function () { var c = s.querySelector('.chip'); if (c) c.focus({ preventScroll: true }); }, 0); }
+  }
+  qs('#row1').addEventListener('click', function (e) {
+    var g = e.target.closest('.fgroup'); if (!g) return;
+    var f = g.dataset.f;
+    if (e.target.closest('.fbtn')) { setOpen(open === f ? null : f); return; }
+    var chip = e.target.closest('.chip'); if (chip) { LT.toggle(f, chip.dataset.id); return; }
+    if (e.target.closest('.clear')) { LT.only(f, null); return; }
+    if (e.target.closest('.done')) { setOpen(null); qs('#bar').querySelector('[data-f="' + f + '"] .fbtn').focus(); }
+  });
+  qs('#scrim').addEventListener('click', function () { setOpen(null); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { var f = open; setOpen(null); qs('[data-f="' + f + '"] .fbtn').focus(); } });
+  qs('#row2').addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) return;
+    if (c.dataset.clear) LT.clear(); else LT.toggle(c.dataset.f, c.dataset.id);
+  });
+
+  function entry(it, i) {
+    var side = i % 2 ? 'b' : 'a', e = LT.esc;
+    var tags = LT.tags(it).map(function (t) { return LT.label(t[0], t[1]); }).join(' · ');
+    if (it.type === 'chapter') {
+      return '<article class="entry chapter family-text ' + side + '"><span class="src own">' + LT.icon('leaf') + 'נכתב ע״י המשפחה</span><h3>' + e(it.title) + ' <bdi>' + LT.years[it.period] + '</bdi></h3><p dir="auto">' + e(it.text) + '</p></article>';
+    }
+    if (it.type === 'photo') {
+      var t = it.text ? '<div><blockquote class="quote" dir="auto">' + e(it.text) + '</blockquote></div>' : '';
+      return '<article class="entry prints ' + side + (t ? ' has-text' : '') + '"><div class="inner">' + LT.fig(it) + t + '</div><p class="tags">' + tags + '</p></article>';
+    }
+    return '<article class="entry words ' + side + '"><blockquote class="quote" dir="auto">' + e(it.text) + '</blockquote><p class="quote-by">' + LT.src(it) + ' · <bdi>' + it.year + '</bdi></p><p class="tags">' + tags + '</p></article>';
+  }
+
+  var first = true;
+  function render() {
+    var vis = LT.visible(), n = LT.visibleContent().length, act = LT.active();
+    order.forEach(function (f) {
+      var g = qs('[data-f="' + f + '"]'), k = Object.keys(LT.sel[f]).length;
+      g.querySelector('.cnt').textContent = k || '';
+      g.querySelector('.fbtn').classList.toggle('on', !!k);
+      F[f].opts.forEach(function (o) {
+        var c = g.querySelector('[data-id="' + o.id + '"]'), cn = LT.count(f, o.id);
+        c.setAttribute('aria-pressed', !!LT.sel[f][o.id]);
+        c.classList.toggle('zero', cn === 0);
+        c.querySelector('.n').textContent = cn;
+      });
+    });
+    document.querySelectorAll('.door').forEach(function (d) {
+      d.setAttribute('aria-pressed', !!LT.sel.relation[d.dataset.rel]);
+      d.querySelector('small').textContent = LT.count('relation', d.dataset.rel) + ' זיכרונות';
+    });
+    qs('#row2').innerHTML = act.length
+      ? act.map(function (a) { return '<button type="button" class="chip x" data-f="' + a.facet + '" data-id="' + a.id + '" aria-label="להסיר את הסינון ' + a.label + '">' + a.label + LT.icon('x') + '</button>'; }).join('') + '<button type="button" class="textbtn" data-clear="1">ניקוי הכול</button>'
+      : '<span class="state">מציגים את כל השולחן. אפשר לצמצם לפי תקופה, מקום עבודה וקרבה.</span>';
+    qs('#count').textContent = LT.say(n, total);
+    var tbl = qs('#table');
+    tbl.innerHTML = n === 0
+      ? '<div class="empty" style="grid-column:1/-1"><strong>אין כאן עדיין זיכרונות בשילוב הזה.</strong><p>אפשר להסיר מסנן, או להיות הראשונים להוסיף.</p><div class="row"><button type="button" class="pill" id="emptyClear">להציג הכול</button><a class="textbtn" href="#table">לשתף זיכרון</a></div></div>'
+      : vis.map(entry).join('');
+    var ec = qs('#emptyClear'); if (ec) ec.onclick = function () { LT.clear(); };
+    if (!first) { tbl.classList.remove('fade'); void tbl.offsetWidth; tbl.classList.add('fade'); }
+    first = false;
+  }
+  LT.onChange(render);
+  render();
+})();
+</script>
+</body>
+</html>

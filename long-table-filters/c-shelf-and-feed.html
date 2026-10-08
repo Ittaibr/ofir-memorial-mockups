@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>הצעה ג · מדף המשפחה והשולחן</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="lt.css">
+<style>
+/* Palette C: evening kitchen. Warm paper, terracotta action, the family's hand in leaf green. */
+:root { --bg: #F7F0E6; --surface: #FFFBF5; --ink: #2B2119; --muted: #685848; --line: #E2D5C2; --accent: #98482A; --accent-soft: #F3DDCF; --on-accent: #fff; --mark: #3D6040; --mark-soft: #DCE8D2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1B1511; --surface: #251D17; --ink: #F2E9DE; --muted: #B8A894; --line: #3C3027; --accent: #EBA483; --accent-soft: #3D261B; --on-accent: #1B1511; --mark: #A9CC9A; --mark-soft: #25331F; } }
+body { padding-block-end: 96px; }
+
+/* opening: small portrait, large name, the family's words */
+.open { padding-block: 24px 20px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: end; }
+.open .print { inline-size: 112px; }
+.open h1 { font: 500 clamp(52px, 15vw, 88px)/1 var(--font-serif); margin: 0; }
+.open .dates { color: var(--muted); font-size: 18px; }
+.open .bio-row { grid-column: 1 / -1; display: grid; gap: 14px; }
+.open .bio { margin: 0; font: 400 22px/1.65 var(--font-serif); max-inline-size: 34ch; }
+.open .family-text { display: grid; gap: 10px; justify-items: start; max-inline-size: 560px; }
+.open .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (min-width: 900px) { .open { grid-template-columns: auto 1fr auto; gap: 40px; padding-block: 48px 36px; } .open .print { inline-size: 200px; } .open .bio-row { grid-column: auto; } .open .bio { font-size: 24px; } }
+
+/* the family's shelf: always visible, never filtered */
+.shelf { padding-block: 8px 28px; }
+.shelf h2 { font: 500 28px/1.25 var(--font-serif); margin: 0 0 4px; }
+.shelf .sub { margin: 0 0 16px; color: var(--muted); }
+.track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x proximity; padding: 4px var(--gutter) 18px; margin-inline: calc(var(--gutter) * -1); scrollbar-width: thin; }
+.track > * { flex: none; inline-size: min(70vw, 280px); scroll-snap-align: start; }
+.track .words-card { align-self: stretch; display: grid; align-content: space-between; gap: 12px; }
+@media (min-width: 900px) { .track > * { inline-size: 300px; } }
+
+/* filter bar: one button, chips for what is on, the count */
+.bar { position: sticky; inset-block-start: 0; z-index: 40; background: var(--bg); border-block: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 10px; padding-block: 8px; }
+.bar .open-f { flex: none; min-block-size: 52px; padding-inline: 18px 16px; border-radius: 999px; border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 18px; display: inline-flex; align-items: center; gap: 10px; }
+.bar .open-f .cnt { background: var(--on-accent); color: var(--accent); inline-size: 24px; block-size: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 14px; }
+.bar .open-f .cnt:empty { display: none; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; min-inline-size: 0; align-items: center; }
+.chips::-webkit-scrollbar { display: none; }
+.chips .chip { min-block-size: 44px; padding-inline: 14px; font-size: 16px; background: var(--accent-soft); border-color: transparent; }
+.chips .chip::before { display: none; }
+.chips .hintline { color: var(--muted); font-size: 16px; white-space: nowrap; }
+.bar .total { flex: none; color: var(--muted); font-size: 16px; white-space: nowrap; }
+@media (max-width: 520px) { .bar .total { display: none; } .bar .open-f { padding-inline: 14px; } }
+
+.sheet fieldset { border: 0; margin: 0 0 18px; padding: 0; }
+.sheet legend { font: 700 18px/1.3 var(--font-ui); padding: 0; margin-block-end: 8px; float: inline-start; inline-size: 100%; }
+.sheet fieldset .opts { clear: both; }
+.sheet .foot { position: sticky; inset-block-end: -20px; background: var(--surface); padding-block: 14px 4px; border-block-start: 1px solid var(--line); }
+@media (min-width: 900px) { .sheet { inset-block-end: auto; inset-block-start: 96px; inset-inline: 0; margin-inline: auto; inline-size: 600px; border-radius: 18px; padding: 26px 28px 20px; } .grab { display: none; } }
+
+/* the feed */
+.feed { padding-block: 28px 24px; columns: 1; column-gap: 24px; min-block-size: 40vh; }
+@media (min-width: 680px) { .feed { columns: 2; } }
+@media (min-width: 1100px) { .feed { columns: 3; } }
+.feed > * { break-inside: avoid; margin-block-end: 30px; }
+.feed.fade { animation: settle .45s var(--ease); }
+@keyframes settle { from { opacity: .3; } to { opacity: 1; } }
+.note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 8px; }
+.note.fam { background: var(--mark-soft); border-color: transparent; }
+.note h3 { margin: 10px 0 6px; font: 500 26px/1.25 var(--font-serif); }
+.note h3 bdi { font: 400 17px var(--font-ui); color: var(--muted); margin-inline-start: 10px; }
+.note .quote { font-size: 20px; }
+.tagrow { display: flex; flex-wrap: wrap; gap: 0 4px; margin-block: 8px 0; }
+.tg { border: 0; background: transparent; color: var(--accent); font-size: 15px; font-weight: 600; min-block-size: 36px; padding-inline: 6px; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+@media (pointer: coarse) { .tg { min-block-size: 48px; padding-inline: 8px; } }
+.tg[aria-pressed="true"] { text-decoration-color: var(--accent); background: var(--accent-soft); border-radius: 8px; }
+.legendrow { padding-block: 0 8px; }
+.dock { position: fixed; inset-inline: 0; inset-block-end: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: center; z-index: 30; pointer-events: none; }
+.dock .pill { pointer-events: auto; box-shadow: 0 8px 24px -6px rgba(43, 33, 25, .35); }
+@media (min-width: 900px) { .dock { display: none; } }
+</style>
+</head>
+<body>
+<div class="proof"><span>הצעה ג מתוך שלוש · כל התמונות, השמות והטקסטים כאן לדוגמה</span><a href="index.html">לכל ההצעות</a></div>
+
+<main>
+  <div class="wrap">
+    <header class="open">
+      <figure class="print" id="portrait"></figure>
+      <div><h1>אופיר</h1><div class="dates"><bdi dir="ltr">19XX – 20XX</bdi></div></div>
+      <div class="bio-row">
+        <div class="family-text"><span class="src own" id="bioSrc"></span><p class="bio">אח, חבר, בן אדם שידע להקשיב. מי שהיה איתו בחדר, הרגיש שהוא היחיד שם.</p></div>
+        <div class="actions"><a class="pill" href="#feed">לשתף זיכרון</a><a class="pill quiet" href="#feed">להשאיר מילה</a></div>
+      </div>
+    </header>
+
+    <section class="shelf" aria-labelledby="shelfH">
+      <h2 id="shelfH">הבחירה של המשפחה</h2>
+      <p class="sub">מה שהמשפחה בחרה להעמיד בראש. המדף הזה לא מושפע מהסינון.</p>
+      <div class="track" id="track" tabindex="0" role="group" aria-label="הבחירה של המשפחה, אפשר לגלול הצידה"></div>
+    </section>
+  </div>
+
+  <div class="bar" id="bar">
+    <div class="wrap">
+      <button type="button" class="open-f" id="openF" aria-haspopup="dialog" aria-expanded="false">סינון<span class="cnt"></span></button>
+      <div class="chips" id="chips"></div>
+      <span class="total" id="total" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <p class="legend legendrow" aria-label="מקרא" style="padding-block-start:18px"><span><span class="src own" id="l1"></span></span><span><span class="src pick" id="l2"></span></span></p>
+    <section class="feed" id="feed" aria-label="השולחן הארוך"></section>
+  </div>
+  <p class="footnote">התמונות והמילים כאן לדוגמה. התגיות נקבעות על ידי המשפחה בעת האישור, ואפשר ללחוץ על כל תגית כדי לראות עוד כמוה.</p>
+  <div class="dock"><a class="pill" href="#feed">לשתף זיכרון</a></div>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH" hidden>
+  <span class="grab"></span>
+  <h2 id="sheetH">מה לראות על השולחן</h2>
+  <p class="sub">אפשר לבחור כמה בכל קבוצה. התוצאות מתעדכנות מיד.</p>
+  <div id="sheetBody"></div>
+  <div class="foot"><button type="button" class="textbtn" id="sheetClear">ניקוי</button><button type="button" class="pill" id="sheetDone"></button></div>
+</div>
+
+<script src="../shared/photos.js"></script>
+<script src="lt.js"></script>
+<script>
+(function () {
+  var qs = function (s, r) { return (r || document).querySelector(s); }, e = LT.esc, F = LT.facets, O = window.OFIR;
+  var order = ['relation', 'period', 'workplace'], total = LT.content().length;
+
+  qs('#openF').innerHTML = LT.icon('filter') + 'סינון<span class="cnt"></span>';
+  qs('#portrait').innerHTML = '<img src="' + O.byId('p01').src + '" alt="אופיר, תמונה לדוגמה" width="600" height="750"><figcaption><span class="cr"><span class="src own">' + LT.icon('leaf') + 'מהמשפחה</span></span></figcaption>';
+  qs('#bioSrc').innerHTML = LT.icon('leaf') + 'נכתב ע״י המשפחה';
+  qs('#l1').innerHTML = LT.icon('leaf') + 'מהמשפחה: נכתב או סופק על ידה';
+  qs('#l2').innerHTML = LT.icon('pick') + 'נבחר ע״י המשפחה: ממי ששיתף';
+
+  /* the shelf: family-supplied and family-picked items, never filtered */
+  var shelf = LT.items.filter(function (i) { return i.type !== 'chapter' && (i.own || i.pick); });
+  qs('#track').innerHTML = shelf.map(function (it) {
+    if (it.type === 'photo') return LT.fig(it);
+    return '<div class="note words-card ' + (it.own ? 'fam' : '') + '"><blockquote class="quote" dir="auto">' + e(it.text) + '</blockquote><p class="quote-by">' + LT.src(it) + '</p></div>';
+  }).join('');
+
+  /* the sheet: all three groups in one place */
+  qs('#sheetBody').innerHTML = order.map(function (f) {
+    return '<fieldset data-f="' + f + '"><legend>' + F[f].label + (f === 'workplace' ? ' <span class="by">(שמות לדוגמה)</span>' : '') + '</legend><div class="opts">' + F[f].opts.map(function (o) { return '<button type="button" class="chip" data-f="' + f + '" data-id="' + o.id + '" aria-pressed="false">' + o.label + ' <span class="n"></span></button>'; }).join('') + '</div></fieldset>';
+  }).join('');
+  qs('#sheetBody').addEventListener('click', function (ev) { var c = ev.target.closest('.chip'); if (c) LT.toggle(c.dataset.f, c.dataset.id); });
+  qs('#sheetClear').onclick = function () { LT.clear(); };
+
+  var lastFocus;
+  function openSheet(on) {
+    qs('#sheet').hidden = !on; qs('#scrim').hidden = !on; qs('#openF').setAttribute('aria-expanded', on);
+    if (on) { lastFocus = document.activeElement; qs('#sheet .chip').focus({ preventScroll: true }); }
+    else if (lastFocus) { qs('#openF').focus({ preventScroll: true }); }
+  }
+  qs('#openF').onclick = function () { openSheet(true); };
+  qs('#scrim').onclick = qs('#sheetDone').onclick = function () { openSheet(false); };
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && !qs('#sheet').hidden) openSheet(false);
+    if (ev.key === 'Tab' && !qs('#sheet').hidden) {
+      var f = Array.prototype.slice.call(qs('#sheet').querySelectorAll('button')), i = f.indexOf(document.activeElement);
+      if (ev.shiftKey && i <= 0) { f[f.length - 1].focus(); ev.preventDefault(); }
+      else if (!ev.shiftKey && i === f.length - 1) { f[0].focus(); ev.preventDefault(); }
+    }
+  });
+  qs('#chips').addEventListener('click', function (ev) { var c = ev.target.closest('.chip'); if (c) LT.toggle(c.dataset.f, c.dataset.id); });
+
+  function tagRow(it) {
+    return '<div class="tagrow">' + LT.tags(it).map(function (t) { return '<button type="button" class="tg" data-f="' + t[0] + '" data-id="' + t[1] + '" aria-pressed="' + !!LT.sel[t[0]][t[1]] + '" aria-label="לסנן לפי ' + LT.label(t[0], t[1]) + '">' + LT.label(t[0], t[1]) + '</button>'; }).join('') + '</div>';
+  }
+  qs('#feed').addEventListener('click', function (ev) { var b = ev.target.closest('.tg'); if (b) LT.toggle(b.dataset.f, b.dataset.id); });
+
+  function card(it) {
+    if (it.type === 'chapter') return '<article class="note fam"><span class="src own">' + LT.icon('leaf') + 'נכתב ע״י המשפחה</span><h3>' + e(it.title) + ' <bdi>' + LT.years[it.period] + '</bdi></h3><p class="quote" dir="auto">' + e(it.text) + '</p></article>';
+    if (it.type === 'photo') return '<article>' + LT.fig(it) + (it.text ? '<blockquote class="quote" dir="auto" style="margin-block:12px 0;font-size:19px">' + e(it.text) + '</blockquote>' : '') + tagRow(it) + '</article>';
+    return '<article class="note' + (it.own ? ' fam' : '') + '"><blockquote class="quote" dir="auto">' + e(it.text) + '</blockquote><p class="quote-by">' + LT.src(it) + ' · <bdi>' + it.year + '</bdi></p>' + tagRow(it) + '</article>';
+  }
+
+  var first = true;
+  function render() {
+    var n = LT.visibleContent().length, act = LT.active();
+    order.forEach(function (f) { F[f].opts.forEach(function (o) {
+      var c = qs('#sheetBody .chip[data-f="' + f + '"][data-id="' + o.id + '"]'), k = LT.count(f, o.id);
+      c.setAttribute('aria-pressed', !!LT.sel[f][o.id]); c.classList.toggle('zero', k === 0); c.querySelector('.n').textContent = k;
+    }); });
+    qs('#sheetDone').textContent = n === 0 ? 'אין זיכרונות בשילוב הזה' : 'להציג ' + n + ' זיכרונות';
+    qs('#openF .cnt').textContent = act.length || '';
+    qs('#chips').innerHTML = act.length
+      ? act.map(function (a) { return '<button type="button" class="chip x" data-f="' + a.facet + '" data-id="' + a.id + '" aria-label="להסיר את הסינון ' + a.label + '">' + a.label + LT.icon('x') + '</button>'; }).join('')
+      : '<span class="hintline">מציגים את כל השולחן</span>';
+    qs('#total').textContent = LT.say(n, total);
+    var feed = qs('#feed'), vis = LT.visible();
+    feed.innerHTML = n === 0
+      ? '<div class="empty"><strong>אין כאן עדיין זיכרונות בשילוב הזה.</strong><p>אפשר להסיר מסנן, או להיות הראשונים להוסיף.</p><div class="row"><button type="button" class="pill" id="emptyClear">להציג הכול</button><a class="textbtn" href="#feed">לשתף זיכרון</a></div></div>'
+      : vis.map(card).join('');
+    var ec = qs('#emptyClear'); if (ec) ec.onclick = function () { LT.clear(); };
+    if (!first) { feed.classList.remove('fade'); void feed.offsetWidth; feed.classList.add('fade'); }
+    first = false;
+  }
+  LT.onChange(render); render();
+})();
+</script>
+</body>
+</html>
