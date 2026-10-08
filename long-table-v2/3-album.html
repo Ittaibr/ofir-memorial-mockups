@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F5F4EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161814" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<title>אופיר · האלבום</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="table.css">
+<style>
+/* 3 · The album: today's DESIGN.md direction, quieted. Limestone and one deep moss; amber and the mist tints are gone. */
+:root { --bg: #F5F4EF; --surface: #FDFCF9; --ink: #23261F; --muted: #5F6359; --line: #DFDFD7; --accent: #4B583D; --accent-soft: #E8EAE1; --on-accent: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #161814; --surface: #1E211C; --ink: #ECEDE6; --muted: #A3A799; --line: #33372F; --accent: #B5C29E; --accent-soft: #262B21; --on-accent: #161814; } }
+
+.hero { display: grid; gap: 32px; padding-block: 48px 80px; }
+.hero .print { inline-size: min(80vw, 340px); }
+.hero h1 { margin: 0; font: 500 clamp(3rem, 14vw, 6rem)/1 var(--font-serif); }
+.meta-line { margin: 14px 0 0; color: var(--muted); }
+.meta-line bdi { margin-inline-start: 4px; }
+.hero .bio { margin: 32px 0 0; max-inline-size: 30ch; font: 400 1.375rem/1.85 var(--font-serif); }
+.hero .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-block-start: 32px; }
+.hero .src { margin: 14px 0 0; }
+@media (min-width: 900px) {
+  .hero { grid-template-columns: 5fr 7fr; gap: 80px; align-items: end; padding-block: 96px 120px; }
+  .hero .print { inline-size: 100%; max-inline-size: 420px; }
+}
+.ways { padding-block: 0 96px; border-block-start: 1px solid var(--line); padding-block-start: 72px; }
+.ways h2 { margin: 0 0 8px; font: 500 clamp(1.75rem, 6vw, 2.25rem)/1.2 var(--font-serif); }
+.ways .lead { margin: 0 0 32px; color: var(--muted); max-inline-size: 44ch; }
+@media (min-width: 900px) { .ways .doors { max-inline-size: 820px; margin-inline: 0; } }
+.fbar .wrap { gap: 0 32px; }
+@media (max-width: 640px) { .fbtns { inline-size: 100%; justify-content: space-between; } }
+.sitefoot { border-block-start: 1px solid var(--line); margin-block-start: 64px; }
+.sitefoot b { display: block; color: var(--ink); font: 500 1.5rem var(--font-serif); margin-block-end: 4px; }
+</style>
+</head>
+<body>
+<div class="proof"></div>
+
+<main id="site">
+  <header class="wrap hero">
+    <figure class="print"><span data-photo="p01" data-alt="אופיר, תמונה לדוגמה"></span></figure>
+    <div>
+      <h1>אופיר</h1>
+      <p class="meta-line">בן · אח · נכד · חבר <bdi dir="ltr">19XX – 20XX</bdi></p>
+      <p class="bio" dir="auto">אח, חבר, בן אדם שידע להקשיב. מי שהיה איתו בחדר, הרגיש שהוא היחיד שם.</p>
+      <span class="src">תמונה ומילים מהמשפחה</span>
+      <div class="actions"><button type="button" class="pill" data-share>לשתף זיכרון</button><button type="button" class="textbtn" data-share>להשאיר מילה</button></div>
+    </div>
+  </header>
+
+  <section class="wrap ways" aria-labelledby="waysH">
+    <h2 id="waysH">השולחן הארוך</h2>
+    <p class="lead">תמונות ומילים ממי שהכירו אותו. אפשר להתחיל מהמשפחה, מהחברים או ממה שאהב לעשות.</p>
+    <div class="doors" id="doors"></div>
+  </section>
+
+  <nav class="fbar" id="fbar" aria-label="סינון השולחן"><div class="wrap"><div class="fbtns" id="fbtns"></div><div class="factive" id="factive"></div></div></nav>
+  <div class="wrap"><section class="table" id="table" aria-label="תמונות ומילים"></section></div>
+
+  <footer class="sitefoot"><b>אופיר</b>המשפחה קוראת כל דבר לפני שהוא מופיע כאן.</footer>
+</main>
+<main id="admin" hidden></main>
+<div class="dock"><button type="button" class="pill" data-share>לשתף זיכרון</button></div>
+
+<script src="../shared/data.js"></script>
+<script src="../shared/photos.js"></script>
+<script src="table.js"></script>
+<script>LongTable.boot({ name: 'הצעה 3 מתוך 3 · האלבום', doors: { family: 'p04', friends: 'p11', hobbies: 'p03' } });</script>
+</body>
+</html>

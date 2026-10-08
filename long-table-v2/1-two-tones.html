@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F8F5EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15181B" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<title>אופיר · שני גוונים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<link rel="stylesheet" href="table.css">
+<style>
+/* 1 · Two tones: cream paper and one slate, the way the inspiration site pairs them. Nothing else carries colour. */
+:root { --bg: #F8F5EF; --surface: #FFFDF9; --ink: #26292D; --muted: #67635E; --line: #E4DED4; --accent: #34414E; --accent-soft: #E8EBEE; --on-accent: #FFFFFF; --band: #34414E; --on-band: #F4EFE7; --on-band-muted: #C4C9CF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #15181B; --surface: #1C2024; --ink: #ECE8E2; --muted: #A59F98; --line: #31373D; --accent: #B8C5D2; --accent-soft: #232A31; --on-accent: #15181B; --band: #20262C; --on-band: #ECE8E2; --on-band-muted: #A9B2BB; } }
+
+.banner { position: relative; }
+.banner img { inline-size: 100%; block-size: clamp(200px, 42vw, 440px); object-fit: cover; }
+.banner .src { position: absolute; inset-block-start: 12px; inset-inline-start: 12px; margin: 0; }
+.band { background: var(--band); color: var(--on-band); }
+.who { display: grid; justify-items: center; text-align: center; padding-block: 0 56px; }
+.who .print { inline-size: min(52vw, 220px); margin-block-start: clamp(-150px, -18vw, -80px); position: relative; }
+.tagline { margin: 28px 0 6px; font: 400 1.125rem/1.5 var(--font-serif); color: var(--on-band-muted); }
+.who h1 { margin: 0; font: 500 clamp(3rem, 13vw, 5.5rem)/1 var(--font-serif); letter-spacing: -.005em; }
+.roles { margin: 14px 0 0; font-size: 1.0625rem; color: var(--on-band); }
+.years { margin: 4px 0 0; font-size: 1rem; color: var(--on-band-muted); }
+.who .src { margin: 12px 0 0; }
+
+.about { padding-block: 72px 24px; display: grid; justify-items: center; text-align: center; }
+.about p { margin: 0; max-inline-size: 36ch; font: 400 1.375rem/1.85 var(--font-serif); }
+.about .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin-block-start: 36px; }
+
+.ways { padding-block: 72px 96px; }
+.ways h2, .tablehead h2 { margin: 0 0 8px; text-align: center; font: 500 clamp(1.75rem, 6vw, 2.5rem)/1.2 var(--font-serif); }
+.ways .lead, .tablehead p { margin: 0 auto 36px; max-inline-size: 40ch; text-align: center; color: var(--muted); }
+.tablehead { background: var(--band); color: var(--on-band); padding-block: 48px 44px; }
+.tablehead p { color: var(--on-band-muted); margin-block-end: 0; }
+.fbar .wrap { justify-content: center; }
+@media (max-width: 640px) { .fbtns { inline-size: 100%; justify-content: space-between; } }
+.sitefoot { background: var(--band); color: var(--on-band-muted); margin-block-start: 64px; }
+.sitefoot b { display: block; color: var(--on-band); font: 500 1.5rem var(--font-serif); margin-block-end: 4px; }
+</style>
+</head>
+<body>
+<div class="proof"></div>
+
+<main id="site">
+  <header>
+    <div class="banner"><span class="hero-img" data-photo="p06" data-alt="נוף שאופיר אהב, תמונה לדוגמה"></span><span class="src">תמונה מהמשפחה</span></div>
+    <div class="band">
+      <div class="wrap who">
+        <figure class="print"><span data-photo="p01" data-alt="אופיר, תמונה לדוגמה"></span></figure>
+        <p class="tagline">כאן משפט קצר של המשפחה</p>
+        <h1>אופיר</h1>
+        <p class="roles">בן · אח · נכד · חבר</p>
+        <p class="years"><bdi dir="ltr">19XX – 20XX</bdi></p>
+        <span class="src">המילים בפתיח יגיעו מהמשפחה</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="wrap about" aria-label="עליו">
+    <p dir="auto">אח, חבר, בן אדם שידע להקשיב. מי שהיה איתו בחדר, הרגיש שהוא היחיד שם.</p>
+    <div class="actions"><button type="button" class="pill" data-share>לשתף זיכרון</button><button type="button" class="textbtn" data-share>להשאיר מילה</button></div>
+  </section>
+
+  <section class="wrap ways" aria-labelledby="waysH">
+    <h2 id="waysH">מי זוכר אותו</h2>
+    <p class="lead">אפשר להתחיל מהמשפחה, מהחברים או ממה שאהב לעשות.</p>
+    <div class="doors" id="doors"></div>
+  </section>
+
+  <div class="tablehead"><div class="wrap"><h2>השולחן הארוך</h2><p>תמונות ומילים ממי שהכירו אותו, לפי סדר השנים.</p></div></div>
+  <nav class="fbar" id="fbar" aria-label="סינון השולחן"><div class="wrap"><div class="fbtns" id="fbtns"></div><div class="factive" id="factive"></div></div></nav>
+  <div class="wrap"><section class="table" id="table" aria-label="תמונות ומילים"></section></div>
+
+  <footer class="sitefoot"><b>אופיר</b>המשפחה קוראת כל דבר לפני שהוא מופיע כאן.</footer>
+</main>
+<main id="admin" hidden></main>
+<div class="dock"><button type="button" class="pill" data-share>לשתף זיכרון</button></div>
+
+<script src="../shared/data.js"></script>
+<script src="../shared/photos.js"></script>
+<script src="table.js"></script>
+<script>
+  LongTable.boot({ name: 'הצעה 1 מתוך 3 · שני גוונים', doors: { family: 'p10', friends: 'p05', hobbies: 'p08' } });
+</script>
+</body>
+</html>
